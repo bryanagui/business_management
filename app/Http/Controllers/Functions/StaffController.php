@@ -94,11 +94,14 @@ class StaffController extends Controller
     {
         if (request()->ajax()) {
             $user = User::where('id', $id)->get();
+            $role = User::withTrashed()->find($id)->roles->first()->name;
+
             return response()->json([
                 'status' => 1,
                 'message' => 'Fetched successfully.',
                 'data' => $user[0],
-                'parsed' => ['birthdate' => (new Carbon($user[0]->birthdate))->format('F d, Y')]
+                'role' => $role,
+                'parsed' => ['birthdate' => (new Carbon($user[0]->birthdate))->format('F d, Y'), 'role' => $role]
             ]);
         }
         return abort(404);
@@ -115,7 +118,11 @@ class StaffController extends Controller
     {
         if (request()->ajax()) {
             $user = User::withTrashed()->where('id', $id)->get();
-            User::withTrashed()->where('id', $id)->update($request->validated());
+
+            User::withTrashed()->where('id', $id)->update($request->safe()->except(['role']));
+
+            User::withTrashed()->find($id)->syncRoles([]);
+            User::withTrashed()->find($id)->assignRole([$request->safe()->only('role')]);
 
             return response()->json([
                 'status' => 1,

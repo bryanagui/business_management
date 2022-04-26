@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class UpdateStaffRequest extends FormRequest
 {
@@ -38,13 +40,15 @@ class UpdateStaffRequest extends FormRequest
      */
     public function rules()
     {
+        $roles = \Spatie\Permission\Models\Role::where('id', '>=', Auth::user()->roles->first()->id)->pluck('name')->all();
         return [
             'name' => 'required',
             'gender' => 'required|in:male,female',
             'address' => 'required',
             'email' => 'required|email:rfc,dns|unique:users,email,' . $this->id,
             'birthdate' => 'required',
-            'contact' => 'required|digits:11'
+            'contact' => 'required|digits:11',
+            'role' => ['required', Rule::in($roles)]
         ];
     }
 }

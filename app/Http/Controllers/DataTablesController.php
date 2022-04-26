@@ -6,6 +6,7 @@ use App\Models\Room;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class DataTablesController extends Controller
@@ -50,22 +51,29 @@ class DataTablesController extends Controller
                     return "<div class='flex'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-full" . $gender . "' src='" . $source . "'></div></div>";
                 })
                 ->addColumn('role', function ($row) {
-                    return $row->getRoleNames()[0];
+                    return !empty($row->getRoleNames()) ? $row->getRoleNames()[0] : 'Unable to Retrieve Role';
                 })
                 ->addColumn('status', function ($row) {
                     return $row->trashed() ? "<span class='text-warning'><i class='fa-solid fa-exclamation w-4 h-4 mr-2'></i> Restricted</span>" : "<span class='text-success'><i class='fa-solid fa-check w-4 h-4 mr-2'></i> Active</span>";
                 })
                 ->addColumn('actions', function ($row) {
                     $buttons = [];
-                    switch ($row->trashed()) {
+                    switch (Auth::user()->roles->first()->id > $row->roles->first()->id) {
                         case true:
                             array_push($buttons, "<div class='flex justify-center items-center'><a href='javascript:;' class='flex items-center mr-3' id='view' data-id='" . $row->id . "'><i class='far fa-eye w-4 h-4 mr-1'></i> View</a>");
-                            array_push($buttons, "<a href='javascript:;' class='flex items-center mr-3 text-warning' id='restore' data-id='" . $row->id . "'><i class='fa-solid fa-trash-arrow-up w-4 h-4 mr-1'></i> Restore</a></div>");
                             break;
                         case false:
-                            array_push($buttons, "<div class='flex justify-center items-center'><a href='javascript:;' class='flex items-center mr-3' id='view' data-id='" . $row->id . "'><i class='far fa-eye w-4 h-4 mr-1'></i> View</a>");
-                            array_push($buttons, "<a href='javascript:;' class='flex items-center mr-3' id='edit' data-id='" . $row->id . "'><i class='fa-regular fa-pen-to-square w-4 h-4 mr-1'></i> Edit</a>");
-                            array_push($buttons, "<a href='javascript:;' class='flex items-center mr-3 text-warning' id='archive' data-id='" . $row->id . "'><i class='fas fa-archive w-4 h-4 mr-1'></i> Archive</a></div>");
+                            switch ($row->trashed()) {
+                                case true:
+                                    array_push($buttons, "<div class='flex justify-center items-center'><a href='javascript:;' class='flex items-center mr-3' id='view' data-id='" . $row->id . "'><i class='far fa-eye w-4 h-4 mr-1'></i> View</a>");
+                                    array_push($buttons, "<a href='javascript:;' class='flex items-center mr-3 text-warning' id='restore' data-id='" . $row->id . "'><i class='fa-solid fa-trash-arrow-up w-4 h-4 mr-1'></i> Restore</a></div>");
+                                    break;
+                                case false:
+                                    array_push($buttons, "<div class='flex justify-center items-center'><a href='javascript:;' class='flex items-center mr-3' id='view' data-id='" . $row->id . "'><i class='far fa-eye w-4 h-4 mr-1'></i> View</a>");
+                                    array_push($buttons, "<a href='javascript:;' class='flex items-center mr-3' id='edit' data-id='" . $row->id . "'><i class='fa-regular fa-pen-to-square w-4 h-4 mr-1'></i> Edit</a>");
+                                    array_push($buttons, "<a href='javascript:;' class='flex items-center mr-3 text-warning' id='archive' data-id='" . $row->id . "'><i class='fas fa-archive w-4 h-4 mr-1'></i> Archive</a></div>");
+                                    break;
+                            }
                             break;
                     }
                     return collect($buttons)->implode(' ');

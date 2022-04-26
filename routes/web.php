@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
     // END: GET Requests
 
-    Route::middleware('role:Administrator|Twice')->group(function () {
+    Route::middleware('role:Administrator|Twice|Hotel Owner|Manager|Executive')->group(function () {
         // Route: Staff //
         Route::get('staff', [PageController::class, 'staff'])->name('staff');
         // BEGIN: Staff Resource Requests

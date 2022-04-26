@@ -129,6 +129,15 @@
                     @method('patch')
                     @csrf
                     <div class="mb-4">
+                        <label for="edit-role" class="form-label">Role/Position:</label>
+                        <select id="edit-role" class="form-select" name="role">
+                            @foreach(\Spatie\Permission\Models\Role::where('id', '>=', Auth::user()->roles->first()->id)->get() as $role)
+                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                        <span class="validation-error error-role {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                    </div>
+                    <div class="mb-4">
                         <label for="edit-name" class="form-label">Full Name</label>
                         <input id="edit-name" type="text" class="form-control" name="name" placeholder="Juan S. Dela Cruz">
                         <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
@@ -503,6 +512,7 @@
                     $.each(response.data, function (i, v) {
                          $("#edit-"+i).val(v);
                     });
+                    $('#edit-role').val(response.parsed.role);
                     response.data.gender == "female" ? $("#edit-gender-female").prop("checked", true) : $("#edit-gender-male").prop("checked", true);
                     $("#edit-date").val(response.parsed.birthdate);
                 },
