@@ -33,6 +33,11 @@ class SideMenu
                 'route_name' => 'guests',
                 'title' => 'Guests'
             ],
+            'pointOfSale' => [
+                'icon' => 'shopping-bag',
+                'route_name' => 'pos',
+                'title' => 'Point of Sale',
+            ],
 
             'users' => [
                 'icon' => 'users',

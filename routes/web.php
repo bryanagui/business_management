@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::get('reservations', [PageController::class, 'reservations'])->name('reservations');
     Route::get('rooms', [PageController::class, 'rooms'])->name('rooms');
     Route::get('guests', [PageController::class, 'guests'])->name('guests');
+    Route::get('point-of-sale', [PageController::class, 'pointOfSale'])->name('pos');
 
 
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');

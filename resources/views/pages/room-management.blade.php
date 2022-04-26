@@ -21,8 +21,8 @@
                             <th class="whitespace-nowrap">IMAGE</th>
                             <th class="whitespace-nowrap">ROOM</th>
                             <th class="whitespace-nowrap">FLOOR</th>
-                            <th class="whitespace-nowrap">DESCRIPTION</th>
                             <th class="whitespace-nowrap">TYPE</th>
+                            <th class="whitespace-nowrap">DESCRIPTION</th>
                             <th class="text-center whitespace-nowrap">RATE</th>
                             <th class="text-center whitespace-nowrap">STATUS</th>
                             <th class="text-center whitespace-nowrap">ACTIONS</th>
@@ -59,10 +59,10 @@
                 {data: "id", name: "id"},
                 {data: "photo", name: "photo"},
                 {data: "number", render: function(data, type, full, meta){
-                    return '<span class="font-medium whitespace-nowrap">'+ 'Room #' + full.number +'</span>'
+                    return '<span class="whitespace-nowrap">'+ 'Room #' + full.number +'</span>'
                 }},
                 {data: "floor", render: function(data, type, full, meta){
-                    return '<span class="font-medium whitespace-nowrap">'+ 'Floor #' + full.floor +'</span>'
+                    return '<span class="whitespace-nowrap">'+ 'Floor #' + full.floor +'</span>'
                 }},
                 {data: "type", name: "type"},
                 {data: "description", name: "description"},

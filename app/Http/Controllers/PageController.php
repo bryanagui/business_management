@@ -63,6 +63,11 @@ class PageController extends Controller
         return view('pages/guests');
     }
 
+    public function pointOfSale()
+    {
+        return view('pages/point-of-sale');
+    }
+
     /**
      * Show specified view.
      *

@@ -100,7 +100,7 @@ class DataTablesController extends Controller
                             break;
                     }
 
-                    return "<div class='flex justify-center'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-full' src='" . $source . "'></div></div>";
+                    return "<div class='flex justify-center'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-lg' src='" . $source . "'></div></div>";
                 })
                 ->addColumn('rate', function ($row) {
                     return '₱' . number_format($row->rate / 100, 2);
