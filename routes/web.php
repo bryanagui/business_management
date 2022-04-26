@@ -38,6 +38,15 @@ Route::middleware('auth')->group(function () {
     });
     // END: DataTables
 
+    // BEGIN: Change Picture Resource Requests
+    Route::group(['prefix' => 'image'], function () {
+        Route::post('store', [ChangePictureController::class, 'store'])->name('image.store'); // CREATE
+        Route::post('show', [ChangePictureController::class, 'show'])->name('image.show'); // READ
+        Route::post('update', [ChangePictureController::class, 'update'])->name('image.update'); // UPDATE
+        Route::post('destroy', [ChangePictureController::class, 'destroy'])->name('image.destroy'); // DELETE
+    });
+    // END: Change Picture Resource Requests
+
     // BEGIN: GET Requests
     Route::get('/', [PageController::class, 'dashboard'])->name('dashboard');
     Route::get('reservations', [PageController::class, 'reservations'])->name('reservations');
@@ -66,13 +75,5 @@ Route::middleware('auth')->group(function () {
 
         // Route: Room Management //
         Route::get('room-management', [PageController::class, 'roomManagement'])->name('room-management');
-        // BEGIN: Change Picture Resource Requests
-        Route::group(['prefix' => 'image'], function () {
-            Route::post('store', [ChangePictureController::class, 'store'])->name('image.store'); // CREATE
-            Route::post('show', [ChangePictureController::class, 'show'])->name('image.show'); // READ
-            Route::post('update', [ChangePictureController::class, 'update'])->name('image.update'); // UPDATE
-            Route::post('destroy', [ChangePictureController::class, 'destroy'])->name('image.destroy'); // DELETE
-        });
-        // END: Change Picture Resource Requests
     });
 });
