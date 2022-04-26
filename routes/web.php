@@ -8,6 +8,7 @@ use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\DataTablesController;
 use App\Http\Controllers\Functions\ChangePictureController;
 use App\Http\Controllers\Functions\StaffController;
+use App\Http\Controllers\Functions\RoomManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,12 +70,18 @@ Route::middleware('auth')->group(function () {
             Route::patch('update/{id}', [StaffController::class, 'update'])->name('staff.update'); // UPDATE
             Route::delete('destroy/{id}', [StaffController::class, 'destroy'])->name('staff.destroy'); // DELETE
             Route::patch('restore/{id}', [StaffController::class, 'restore'])->name('staff.restore'); // DELETE (Restore)
-            // END: Staff Resource Requests
         });
+        // END: Staff Resource Requests
 
         // --------------------------------------------------------------------------------------------- //
 
         // Route: Room Management //
         Route::get('room-management', [PageController::class, 'roomManagement'])->name('room-management');
+        // BEGIN: Room Management Resource Requests
+        Route::group(['prefix' => 'room-management'], function () {
+            Route::post('store', [RoomManagementController::class, 'store'])->name('room_management.store'); // CREATE
+        });
+        // END: Room Management Resource Requests
+
     });
 });

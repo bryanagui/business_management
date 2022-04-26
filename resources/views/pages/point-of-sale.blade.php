@@ -15,28 +15,6 @@
                     <i class="w-4 h-4" data-feather="chevron-down"></i>
                 </span>
             </button>
-            <div class="pos-dropdown__dropdown-menu dropdown-menu">
-                <ul class="dropdown-content">
-                    <li>
-                        <a href="" class="dropdown-item">
-                            <i data-feather="activity" class="w-4 h-4 mr-2"></i>
-                            <span class="truncate">INV-0206020 - {{ $fakers[3]['users'][0]['name'] }}</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="dropdown-item">
-                            <i data-feather="activity" class="w-4 h-4 mr-2"></i>
-                            <span class="truncate">INV-0206022 - {{ $fakers[4]['users'][0]['name'] }}</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="dropdown-item">
-                            <i data-feather="activity" class="w-4 h-4 mr-2"></i>
-                            <span class="truncate">INV-0206021 - {{ $fakers[5]['users'][0]['name'] }}</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
         </div>
     </div>
 </div>
@@ -48,13 +26,6 @@
                 <input type="text" class="form-control py-3 px-4 w-full lg:w-64 box pr-10" placeholder="Search item...">
                 <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-500" data-feather="search"></i>
             </div>
-            <select class="form-select py-3 px-4 box w-full lg:w-auto mt-3 lg:mt-0 ml-auto">
-                <option>Sort By</option>
-                <option>A to Z</option>
-                <option>Z to A</option>
-                <option>Lowest Price</option>
-                <option>Highest Price</option>
-            </select>
         </div>
         <div class="grid grid-cols-12 gap-5 mt-5">
             <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
