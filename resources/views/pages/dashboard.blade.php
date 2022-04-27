@@ -601,6 +601,7 @@
                 error: function (xhr) {
                     if(xhr.status == 422){
                         showModal("#error-modal");
+                        $("#dp-file-upload").val(null);
                     }
                 }
             });

@@ -42,12 +42,14 @@ class RoomManagementController extends Controller
             $validated = $request->validated();
             $validated['rate'] = $request->rate * 100;
 
-            $file = $request->file('media');
+            if (!empty($request->image)) {
+                $file = $request->file('image');
 
-            $filename = Str::random(30) . ".jpg";
-            $path = $file->storeAs('public/static/thumbnails', $filename);
+                $filename = Str::random(30) . ".jpg";
+                $path = $file->storeAs('public/static/thumbnails', $filename);
 
-            $validated['media'] = $filename;
+                $validated['media'] = $filename;
+            }
 
             Room::create($validated);
 

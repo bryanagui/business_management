@@ -7,6 +7,7 @@ use App\Http\Controllers\DarkModeController;
 use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\DataTablesController;
 use App\Http\Controllers\Functions\ChangePictureController;
+use App\Http\Controllers\Functions\ChangeThumbnailController;
 use App\Http\Controllers\Functions\StaffController;
 use App\Http\Controllers\Functions\RoomManagementController;
 
@@ -82,6 +83,15 @@ Route::middleware('auth')->group(function () {
             Route::post('store', [RoomManagementController::class, 'store'])->name('room_management.store'); // CREATE
         });
         // END: Room Management Resource Requests
+
+        // BEGIN: Change Thumbnail Resource Requests
+        Route::group(['prefix' => 'thumbnail'], function () {
+            Route::post('store', [ChangeThumbnailController::class, 'store'])->name('thumbnail.store');
+            Route::post('show', [ChangeThumbnailController::class, 'show'])->name('thumbnail.show');
+            Route::post('update', [ChangeThumbnailController::class, 'update'])->name('thumbnail.update');
+            Route::post('destroy', [ChangeThumbnailController::class, 'destroy'])->name('thumbnail.destroy'); // CREATE
+        });
+        // END: Change Thumbnail Resource Requests
 
     });
 });

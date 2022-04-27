@@ -93,10 +93,10 @@ class DataTablesController extends Controller
                     $source = null;
                     switch (empty($row->media)) {
                         case true:
-                            $source = asset('storage/static/images') . '/null.jpg';
+                            $source = asset('storage/static/images') . '/nothumb.jpg';
                             break;
                         case false:
-                            file_exists(public_path() . '/storage/static/images/' . $row->media) ? $source = asset('storage/static/images') . '/' . $row->media : $source = asset('storage/static/images') . '/null.jpg';
+                            file_exists(public_path() . '/storage/static/thumbnails/' . $row->media) ? $source = asset('storage/static/thumbnails') . '/' . $row->media : $source = asset('storage/static/images') . '/nothumb.jpg';
                             break;
                     }
 

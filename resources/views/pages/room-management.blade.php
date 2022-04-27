@@ -2,6 +2,10 @@
 
 @section('subhead')
 <title>Reserv8tion - Room Management</title>
+<link href="http://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('dist/css/square-cropper.css') }}" />
+<link rel="stylesheet" href="{{ asset('dist/css/form-range.css') }}" />
+<link rel="stylesheet" href="{{ asset('dist/css/nouislider.css') }}" />
 @endsection
 
 @section('subcontent')
@@ -47,6 +51,51 @@
     </div>
 </div>
 <!-- END: Successful Notification -->
+<!-- BEGIN: Error Modal -->
+<div id="error-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center"> <i data-feather="x-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
+                    <div class="text-3xl mt-5">Error!</div>
+                    <div class="text-slate-500 mt-2">We could not read the file uploaded.<br>Supported file types: JPG, JPEG, PNG</div>
+                </div>
+                <div class="px-5 pb-8 text-center"><button type="button" data-tw-dismiss="modal" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">OK</button> </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Error Modal -->
+<!-- BEGIN: Discard Upload Modal -->
+<div id="discard-upload-modal" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
+                    <div class="text-3xl mt-5">Discard</div>
+                    <div class="text-slate-500 mt-2">Are you sure you want to discard your changes?</div>
+                </div>
+                <div class="px-5 pb-8 text-center"><button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <button type="button" id="confirm-discard-upload" data-tw-dismiss="modal" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Yes</button> </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Discard Upload Modal -->
+<!-- BEGIN: Confirm Upload Modal -->
+<div id="confirm-upload-modal" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center"> <i data-feather="check-circle" class="w-16 h-16 text-success mx-auto mt-3"></i>
+                    <div class="text-3xl mt-5">Confirm</div>
+                    <div class="text-slate-500 mt-2">Are you sure you want to continue with your current changes?</div>
+                </div>
+                <div class="px-5 pb-8 text-center"><button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <button type="button" data-tw-dismiss="modal" class="btn btn-success confirm-cropped-upload w-24">Yes</button> </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Confirm Upload Modal -->
 <!-- BEGIN: Create New Hotel Room Modal -->
 <div id="create-new-room-modal" class="modal modal-slide-over" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -55,14 +104,17 @@
                 <h2 class="font-medium text-base mr-auto">Add New Room</h2>
             </div>
             <div class="modal-body">
+                <form id="image-upload" method="POST">
+                    @csrf
+                    <input type="file" id="thumbnail-upload" accept="image/*,image/heif,image/heic" name="image" hidden>
+                </form>
                 <form id="create-form" action="{{ route('room_management.store') }}" method="POST">
                     @csrf
                     <div class="flex justify-center mb-4">
                         <div class="w-56">
                             <div class="w-56 h-56 image-fit zoom-in">
-                                <img src="{{ asset('/storage/images/sana-default.jpg') }}" id="view-staff-image" class="rounded-lg">
+                                <img src="{{ asset('/storage/static/images/nothumb.jpg') }}" id="thumbnail-preview" class="rounded-lg">
                             </div>
-                            <input type="file" id="thumbnail-upload" accept="image/*,image/heif,image/heic" name="media" hidden>
                             <button type="button" id="thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Thumbnail</button>
                             <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                         </div>
@@ -103,10 +155,45 @@
     </div>
 </div>
 <!-- END: Create new Hotel Room Modal -->
+<!-- BEGIN: Crop Image for Upload Modal -->
+<div id="image-crop-modal" class="modal" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <!-- BEGIN: Modal Header -->
+            <div class="modal-header">
+                <h2 class="font-medium text-base mr-auto">Thumbnail</h2>
+                <a href="javascript:;" id="x-dismiss-modal"> <i data-feather="x" class="w-5 h-5 text-slate-400"></i> </a>
+            </div>
+            <!-- END: Modal Header -->
+            <!-- BEGIN: Modal Body -->
+            <div class="modal-body p-4">
+                <div class="flex justify-center image-darken w-full max-h-128">
+                    <img src="" class="rounded-lg" id="picture-preview">
+                </div>
+                <div class="flex justify-center">
+                    <div class="w-72 mt-4">
+                        <div id="zoom-level-slider"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- END: Modal Body -->
+            <!-- BEGIN: Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" id="cancel-dismiss-modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button>
+                <button type="button" id="upload-cropped-image" class="btn btn-primary w-24">Save</button>
+            </div>
+            <!-- END: Modal Footer -->
+        </div>
+    </div>
+</div>
+<!-- END: Crop Image for Upload Modal -->
 @endsection
 
 @section('script')
-<script src="{{ asset('dist/js/datatables.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script src="{{ asset('/dist/js/jquery-cropper.min.js') }}"></script>
+<script src="{{ asset('/dist/js/nouislider.min.js') }}"></script>
+<script src="{{ asset('/dist/js/datatables.js') }}"></script>
 <script>
     $(document).ready(function () {
         $.ajaxSetup({
@@ -165,6 +252,18 @@
             $('span.validation-error').text('');
         }
 
+        function showModal(selector){
+            const el = document.querySelector(selector);
+            const modal = tailwind.Modal.getOrCreateInstance(el);
+            modal.show();
+        }
+
+        function hideModal(selector){
+            const el = document.querySelector(selector);
+            const modal = tailwind.Modal.getOrCreateInstance(el);
+            modal.hide();
+        }
+
         function hideSlideover(selector){
             const el = document.querySelector(selector);
             const slideOver = tailwind.Modal.getOrCreateInstance(el);
@@ -204,8 +303,173 @@
             $("#room-success-notification-content").text(content);
         }
 
+        var rangeSlider = document.getElementById('zoom-level-slider');
+
+        noUiSlider.create(rangeSlider, {
+            start: [0],
+            step: 0.001,
+            connect: [true, false],
+            range: {
+                'min': [0],
+                'max': [1.6667]
+            }
+        });
+
+        const createFormImage = new FormData();
+
         $("#thumbnail-upload-trigger").click(function (e) {
             $("#thumbnail-upload").trigger('click');
+        });
+
+        $("#thumbnail-upload").off().change(function (e) {
+            e.preventDefault();
+
+            let form = document.getElementById("image-upload")
+            let fd = new FormData(form);
+            $.ajax({
+                type: "POST",
+                url: "{{ route('thumbnail.store') }}",
+                data: fd,
+                dataType: "json",
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if(response.status == 1){
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('thumbnail.show') }}",
+                            data: { submit: true },
+                            dataType: "json",
+                            success: function (response) {
+                                showModal('#image-crop-modal');
+                                $("#picture-preview").attr("src", response.location);
+                                var $image = $('#picture-preview');
+
+                                $image.cropper({
+                                    aspectRatio: 1/1,
+                                    dragMode: 'move',
+                                    viewMode: 1,
+                                    autoCropArea: 1,
+                                    responsive: true,
+                                    restore: false,
+                                    guides: false,
+                                    center: false,
+                                    highlight: false,
+                                    cropBoxMovable: false,
+                                    cropBoxResizable: false,
+                                    toggleDragModeOnDblclick: false,
+                                    zoomOnWheel: false,
+                                    ready: function() {
+                                        // var canvasData = $image.cropper('getCanvasData');
+                                        var cropBoxData = $image.cropper('getCropBoxData');
+                                        var imageData = $image.cropper('getImageData');
+
+                                        rangeSlider.noUiSlider.updateOptions({
+                                            range: {
+                                                'min': imageData.width / imageData.naturalWidth,
+                                                'max': 1.667,
+                                            }
+                                        });
+
+                                        rangeSlider.noUiSlider.set([imageData.width / imageData.naturalWidth]);
+
+                                        rangeSlider.noUiSlider.on('slide', function () {
+                                            $image.cropper('zoomTo', rangeSlider.noUiSlider.get());
+                                        });
+
+                                        $(window).resize(function () {
+                                            if(window.innerWidth < 1023) {
+                                                rangeSlider.noUiSlider.updateOptions({
+                                                    range: {
+                                                        'min': $(".cropper-crop-box").width() / imageData.naturalWidth,
+                                                        'max': 1.667,
+                                                    }
+                                                });
+                                            }
+                                            else {
+                                                rangeSlider.noUiSlider.updateOptions({
+                                                    range: {
+                                                        'min': imageData.width / imageData.naturalWidth,
+                                                        'max': 1.667,
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    },
+                                });
+
+                                var cropper = $image.data('cropper');
+                                $("#upload-cropped-image").click(function (e) {
+                                    e.preventDefault();
+
+                                    showModal("#confirm-upload-modal");
+                                        $(".confirm-cropped-upload").off().click(function (e) {
+                                            $image.cropper("getCroppedCanvas").toBlob((blob) => {
+                                            createFormImage.append('image', blob);
+
+                                            console.log(createFormImage);
+
+                                            const fd = new FormData();
+                                            fd.append('image', blob);
+
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "{{ route('thumbnail.store') }}",
+                                                data: fd,
+                                                dataType: "json",
+                                                cache: false,
+                                                processData: false,
+                                                contentType: false,
+                                                success: function (response) {
+                                                    hideModal("#image-crop-modal");
+                                                    $("#thumbnail-preview").attr("src", response.location);
+                                                    $("#thumbnail-upload").val(null);
+                                                    $("#picture-preview").removeAttr("src");
+                                                    $image.cropper("destroy");
+                                                    rangeSlider.noUiSlider.reset();
+                                                    $.ajax({
+                                                        type: "POST",
+                                                        url: "{{ route('image.destroy') }}",
+                                                        data: { submit: true },
+                                                        dataType: "json",
+                                                    });
+                                                }
+                                            });
+                                        });
+                                    });
+                                });
+
+                                $("#x-dismiss-modal, #cancel-dismiss-modal").click(function (e) {
+                                    showModal("#discard-upload-modal");
+                                    $("#confirm-discard-upload").off().click(function (e) {
+                                        $("#thumbnail-upload").val(null);
+                                        $("#picture-preview").removeAttr("src");
+                                        $image.cropper("destroy");
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "{{ route('thumbnail.destroy') }}",
+                                            data: { submit: true },
+                                            dataType: "json",
+                                            success: function (response) {
+                                                hideModal("#image-crop-modal");
+                                                hideModal("#discard-upload-modal");
+                                                rangeSlider.noUiSlider.reset();
+                                            },
+                                        });
+                                    });
+                                });
+                            }
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    if(xhr.status == 422){
+                        showModal("#error-modal");
+                        $("#thumbnail-upload").val(null);
+                    }
+                }
+            });
         });
 
         $("#create-form").submit(function (e) {
@@ -214,6 +478,9 @@
 
             let form = document.getElementById("create-form")
             let fd = new FormData(form);
+
+            fd.append('image', createFormImage.get('image'));
+
             $.ajax({
                 type: "POST",
                 url: "{{ route('room_management.store') }}",

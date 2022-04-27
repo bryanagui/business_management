@@ -46,7 +46,6 @@
 .cropper-view-box{
     display:block;
     height:100%;
-    border-radius: 100%;
     /* outline:1px solid #39f;
     outline-color:rgba(255,255,255,.75); */
     overflow:hidden;
