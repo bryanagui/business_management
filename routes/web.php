@@ -62,9 +62,9 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:Administrator|Twice|Hotel Owner|Manager|Executive')->group(function () {
         // Route: Staff //
-        Route::get('staff', [PageController::class, 'staff'])->name('staff');
         // BEGIN: Staff Resource Requests
         Route::group(['prefix' => 'staff'], function () {
+            Route::get('/', [PageController::class, 'staff'])->name('staff');
             Route::post('store', [StaffController::class, 'store'])->name('staff.store'); // CREATE
             Route::post('edit/{id}', [StaffController::class, 'edit'])->name('staff.edit'); // READ
             Route::post('show/{id}', [StaffController::class, 'show'])->name('staff.show'); // READ
@@ -77,18 +77,18 @@ Route::middleware('auth')->group(function () {
         // --------------------------------------------------------------------------------------------- //
 
         // Route: Room Management //
-        Route::get('room-management', [PageController::class, 'roomManagement'])->name('room-management');
         // BEGIN: Room Management Resource Requests
         Route::group(['prefix' => 'room-management'], function () {
+            Route::get('/', [PageController::class, 'roomManagement'])->name('room_management');
             Route::post('store', [RoomManagementController::class, 'store'])->name('room_management.store'); // CREATE
         });
         // END: Room Management Resource Requests
 
         // BEGIN: Change Thumbnail Resource Requests
         Route::group(['prefix' => 'thumbnail'], function () {
-            Route::post('store', [ChangeThumbnailController::class, 'store'])->name('thumbnail.store');
-            Route::post('show', [ChangeThumbnailController::class, 'show'])->name('thumbnail.show');
-            Route::post('update', [ChangeThumbnailController::class, 'update'])->name('thumbnail.update');
+            Route::post('store', [ChangeThumbnailController::class, 'store'])->name('thumbnail.store'); // CREATE
+            Route::post('show', [ChangeThumbnailController::class, 'show'])->name('thumbnail.show'); // READ
+            Route::post('update', [ChangeThumbnailController::class, 'update'])->name('thumbnail.update'); // UPDATE
             Route::post('destroy', [ChangeThumbnailController::class, 'destroy'])->name('thumbnail.destroy'); // CREATE
         });
         // END: Change Thumbnail Resource Requests

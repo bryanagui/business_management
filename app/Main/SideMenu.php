@@ -46,7 +46,7 @@ class SideMenu
             ],
             'room-management' => [
                 'icon' => 'hard-drive',
-                'route_name' => 'room-management',
+                'route_name' => 'room_management',
                 'title' => 'Room Management'
             ],
         ];

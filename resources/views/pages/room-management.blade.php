@@ -510,6 +510,44 @@
                 }
             });
         });
+
+        $("table").on('click', '#archive', function (e) {
+            e.preventDefault();
+            showModal("#deactivate-staff-modal");
+
+            var id = $(this).data("id");
+            $("#confirm-room-deactivate").off().click(function (e) {
+                loading("#confirm-room-deactivate");
+                $.ajax({
+                    type: "DELETE",
+                    url: "{{ route('staff') }}" + "/destroy/" + id,
+                    data: { submit: true },
+                    dataType: "json",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        switch(response.status){
+                            case 1:
+                                showSuccessNotification(response.title, response.content);
+                                break;
+                            default:
+                                showDangerNotification(response.title, response.content);
+                                break;
+                        }
+                        finishedLoading("#confirm-room-deactivate", "Archive");
+                        hideModal("#deactivate-room-modal");
+                        table.ajax.reload();
+                    },
+                    error: function (xhr) {
+                        finishedLoading("#confirm-room-deactivate", "Archive");
+                        hideModal("#deactivate-room-modal");
+                        showDangerNotification(response.title, response.content);
+                    }
+                });
+            });
+        });
+
     });
 </script>
 @endsection

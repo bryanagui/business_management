@@ -7,6 +7,7 @@ use App\Http\Requests\StoreStaffRequest;
 use App\Http\Requests\UpdateStaffRequest;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -142,21 +143,29 @@ class StaffController extends Controller
     public function destroy($id)
     {
         if (request()->ajax()) {
-            if (request()->isMethod('delete')) {
-                $user = User::where('id', $id)->get();
-                if ($id != 1) {
-                    User::where('id', $id)->delete();
+            try {
+                if (request()->isMethod('delete')) {
+                    $user = User::where('id', $id)->get();
+                    if ($id != 1) {
+                        User::where('id', $id)->delete();
 
+                        return response()->json([
+                            'status' => 1,
+                            'title' => 'Operation successful',
+                            'content' => 'Staff ' . $user[0]->name . ' has been deactivated.'
+                        ]);
+                    }
                     return response()->json([
-                        'status' => 1,
-                        'title' => 'Operation successful',
-                        'content' => 'Staff ' . $user[0]->name . ' has been deactivated.'
+                        'status' => 0,
+                        'title' => 'Operation failed',
+                        'content' => 'Unable to deactivate staff ' . $user[0]->name . '. Reason: "This account is an administrator."'
                     ]);
                 }
+            } catch (Exception $ex) {
                 return response()->json([
-                    'status' => 0,
-                    'title' => 'Operation failed',
-                    'content' => 'Unable to deactivate staff ' . $user[0]->name . '. Reason: "This account is an administrator."'
+                    'status' => 1,
+                    'title' => 'Operation Failed',
+                    'content' => 'Unable to perform action.'
                 ]);
             }
         }

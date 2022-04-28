@@ -583,6 +583,11 @@
                         hideModal("#deactivate-staff-modal");
                         table.ajax.reload();
                     },
+                    error: function (xhr) {
+                        finishedLoading("#confirm-staff-deactivate", "Archive");
+                        hideModal("#deactivate-staff-modal");
+                        showDangerNotification(response.title, response.content);
+                    }
                 });
             });
         });
