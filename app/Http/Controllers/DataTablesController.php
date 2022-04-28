@@ -71,7 +71,7 @@ class DataTablesController extends Controller
                                 case false:
                                     array_push($buttons, "<div class='flex justify-center items-center'><a href='javascript:;' class='flex items-center mr-3' id='view' data-id='" . $row->id . "'><i class='far fa-eye w-4 h-4 mr-1'></i> View</a>");
                                     array_push($buttons, "<a href='javascript:;' class='flex items-center mr-3' id='edit' data-id='" . $row->id . "'><i class='fa-regular fa-pen-to-square w-4 h-4 mr-1'></i> Edit</a>");
-                                    array_push($buttons, "<a href='javascript:;' class='flex items-center mr-3 text-warning' id='archive' data-id='" . $row->id . "'><i class='fas fa-archive w-4 h-4 mr-1'></i> Archive</a></div>");
+                                    Auth::user()->id == $row->id ? '' : array_push($buttons, "<a href='javascript:;' class='flex items-center mr-3 text-warning' id='archive' data-id='" . $row->id . "'><i class='fas fa-archive w-4 h-4 mr-1'></i> Archive</a></div>");
                                     break;
                             }
                             break;

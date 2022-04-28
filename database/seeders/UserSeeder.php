@@ -64,6 +64,21 @@ class UserSeeder extends Seeder
         ])->assignRole(['Twice']);
 
         User::create([
+            'name' => 'Myoui Mina',
+            'email' => 'mina.twice@jyp.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('iloveumina'),
+            'gender' => 'female',
+            'birthdate' => new Carbon("March 24, 1997"),
+            'address' => 'Seoul, South Korea',
+            'contact' => '09123456789',
+            'photo' => 'mina-default.jpg',
+            'remember_token' => Str::random(10),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ])->assignRole(['Twice']);
+
+        User::create([
             'name' => 'Kim Dahyun',
             'email' => 'dahyun.twice@jyp.com',
             'email_verified_at' => now(),

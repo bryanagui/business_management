@@ -428,12 +428,6 @@
                                                     $("#picture-preview").removeAttr("src");
                                                     $image.cropper("destroy");
                                                     rangeSlider.noUiSlider.reset();
-                                                    $.ajax({
-                                                        type: "POST",
-                                                        url: "{{ route('image.destroy') }}",
-                                                        data: { submit: true },
-                                                        dataType: "json",
-                                                    });
                                                 }
                                             });
                                         });
@@ -496,6 +490,12 @@
                         clearCreateModal();
                         showSuccessNotification(response.title, response.content);
                         table.ajax.reload();
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('thumbnail.destroy') }}",
+                            data: { submit: true },
+                            dataType: "json",
+                        });
                     }
                 },
                 error: function (xhr) {

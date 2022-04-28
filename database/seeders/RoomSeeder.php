@@ -17,9 +17,9 @@ class RoomSeeder extends Seeder
         Room::create([
             'number' => 1001,
             'floor' => 1,
-            'type' => 'Standard',
-            'description' => 'Default room for testing purposes.',
-            'rate' => 500000,
+            'type' => 'Studio',
+            'description' => 'Can handle a maximum of 2 persons.',
+            'rate' => 250000,
         ]);
     }
 }
