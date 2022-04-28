@@ -145,20 +145,20 @@ class StaffController extends Controller
         if (request()->ajax()) {
             try {
                 if (request()->isMethod('delete')) {
-                    $user = User::where('id', $id)->get();
+                    $user = User::where('id', $id)->first();
                     if ($id != 1) {
                         User::where('id', $id)->delete();
 
                         return response()->json([
                             'status' => 1,
                             'title' => 'Operation successful',
-                            'content' => 'Staff ' . $user[0]->name . ' has been deactivated.'
+                            'content' => 'Staff ' . $user->name . ' has been deactivated.'
                         ]);
                     }
                     return response()->json([
                         'status' => 0,
                         'title' => 'Operation failed',
-                        'content' => 'Unable to deactivate staff ' . $user[0]->name . '. Reason: "This account is an administrator."'
+                        'content' => 'Unable to deactivate staff ' . $user->name . '. Reason: "This account is an administrator."'
                     ]);
                 }
             } catch (Exception $ex) {

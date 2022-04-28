@@ -130,7 +130,7 @@ class ChangeThumbnailController extends Controller
             Thumbnail::where('user_id', Auth::user()->id)->delete();
 
             return response()->json([
-                'status' => 1,
+                'status' => 0,
                 'message' => 'Operation cancelled.',
             ]);
         }

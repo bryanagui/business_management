@@ -14,12 +14,13 @@ class RoomSeeder extends Seeder
      */
     public function run()
     {
-        Room::create([
-            'number' => 1001,
-            'floor' => 1,
-            'type' => 'Studio',
-            'description' => 'Can handle a maximum of 2 persons.',
-            'rate' => 250000,
-        ]);
+        Room::factory()->count(50)->create();
+        // Room::create([
+        //     'number' => 1001,
+        //     'floor' => 1,
+        //     'type' => 'Studio',
+        //     'description' => 'Can handle a maximum of 2 persons.',
+        //     'rate' => 250000,
+        // ]);
     }
 }

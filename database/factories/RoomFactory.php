@@ -14,7 +14,11 @@ class RoomFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'number' => rand(1000, 3000),
+            'floor' => rand(1, 30),
+            'type' => 'Studio',
+            'description' => 'Can handle a maximum of 2 persons.',
+            'rate' => rand(250000, 1250000),
         ];
     }
 }

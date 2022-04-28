@@ -81,6 +81,9 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'room-management'], function () {
             Route::get('/', [PageController::class, 'roomManagement'])->name('room_management');
             Route::post('store', [RoomManagementController::class, 'store'])->name('room_management.store'); // CREATE
+            Route::delete('archive/{id}', [RoomManagementController::class, 'archive'])->name('room_management.archive'); // DELETE (Archive)
+            Route::delete('destroy/{id}', [RoomManagementController::class, 'destroy'])->name('room_management.destroy'); // DELETE (Force Delete)
+            Route::patch('restore/{id}', [RoomManagementController::class, 'restore'])->name('room_management.restore'); // DELETE (Restore)
         });
         // END: Room Management Resource Requests
 

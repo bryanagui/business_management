@@ -353,7 +353,7 @@
             <!-- BEGIN: Modal Footer -->
             <div class="modal-footer">
                 <button type="button" id="cancel-dismiss-modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button>
-                <button type="button" id="upload-cropped-image" class="btn btn-primary w-24">Upload</button>
+                <button type="button" id="upload-cropped-image" class="btn btn-primary w-24">Save</button>
             </div>
             <!-- END: Modal Footer -->
         </div>

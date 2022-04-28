@@ -51,6 +51,14 @@
     </div>
 </div>
 <!-- END: Successful Notification -->
+<!-- BEGIN: Danger Notification -->
+<div id="room-danger-notification" class="toastify-content hidden flex"> <i class="text-danger" data-feather="x-circle"></i>
+    <div class="ml-4 mr-4">
+        <div id="room-danger-notification-title" class="font-medium"></div>
+        <div id="room-danger-notification-content" class="text-slate-500 mt-1"></div>
+    </div>
+</div>
+<!-- END: Danger Notification -->
 <!-- BEGIN: Error Modal -->
 <div id="error-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -187,6 +195,51 @@
     </div>
 </div>
 <!-- END: Crop Image for Upload Modal -->
+<!-- BEGIN: Deactivate Room Modal -->
+<div id="deactivate-room-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
+                    <div class="text-3xl mt-5">Are you sure?</div>
+                    <div class="text-slate-500 mt-2">Do you really want to archive these records? <br>These records can be restored later.</div>
+                </div>
+                <div class="px-5 pb-8 text-center"> <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <button type="button" id="confirm-room-deactivate" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Archive</button> </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Deactivate Room Modal -->
+<!-- BEGIN: Deactivate Room Modal -->
+<div id="delete-room-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center"> <i data-feather="x-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
+                    <div class="text-3xl mt-5">Are you sure?</div>
+                    <div class="text-slate-500 mt-2">Do you really want to permanently delete these records? <br>This action cannot be undone!</div>
+                </div>
+                <div class="px-5 pb-8 text-center"> <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <button type="button" id="confirm-room-delete" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Delete</button> </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Deactivate Room Modal -->
+<!-- BEGIN: Restore Room Modal -->
+<div id="restore-room-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center"> <i data-feather="check-circle" class="w-16 h-16 text-warning mx-auto mt-3"></i>
+                    <div class="text-3xl mt-5">Are you sure?</div>
+                    <div class="text-slate-500 mt-2">Do you really want to restore these records? <br>The hotel room and its records will be visible again.</div>
+                </div>
+                <div class="px-5 pb-8 text-center"> <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <button type="button" id="confirm-room-restore" class="btn btn-warning w-24">Restore</button> </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Restore Room Modal -->
 @endsection
 
 @section('script')
@@ -303,6 +356,22 @@
             $("#room-success-notification-content").text(content);
         }
 
+        function showDangerNotification(title, content){
+            Toastify({
+                node: $("#room-danger-notification")
+                    .clone()
+                    .removeClass("hidden")[0],
+                duration: 5000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+            }).showToast();
+            $("#room-danger-notification-title").text(title);
+            $("#room-danger-notification-content").text(content);
+        }
+
         var rangeSlider = document.getElementById('zoom-level-slider');
 
         noUiSlider.create(rangeSlider, {
@@ -408,8 +477,6 @@
                                             $image.cropper("getCroppedCanvas").toBlob((blob) => {
                                             createFormImage.append('image', blob);
 
-                                            console.log(createFormImage);
-
                                             const fd = new FormData();
                                             fd.append('image', blob);
 
@@ -473,7 +540,9 @@
             let form = document.getElementById("create-form")
             let fd = new FormData(form);
 
-            fd.append('image', createFormImage.get('image'));
+            if(createFormImage.get('image') != null){
+                fd.append('image', createFormImage.get('image'));
+            }
 
             $.ajax({
                 type: "POST",
@@ -484,6 +553,11 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
+                    $("#thumbnail-upload").val(null);
+                    $("#thumbnail-preview").attr("src", "{{ asset('/storage/static/images/nothumb.jpg') }}");
+                    if(createFormImage.get('image') != null){
+                        createFormImage.delete('image');
+                    }
                     if(response.status == 1){
                         finishedLoading("#create-form-submit", "Submit");
                         hideSlideover("#create-new-room-modal")
@@ -513,14 +587,14 @@
 
         $("table").on('click', '#archive', function (e) {
             e.preventDefault();
-            showModal("#deactivate-staff-modal");
+            showModal("#deactivate-room-modal");
 
             var id = $(this).data("id");
             $("#confirm-room-deactivate").off().click(function (e) {
                 loading("#confirm-room-deactivate");
                 $.ajax({
                     type: "DELETE",
-                    url: "{{ route('staff') }}" + "/destroy/" + id,
+                    url: "{{ route('room_management') }}" + "/archive/" + id,
                     data: { submit: true },
                     dataType: "json",
                     cache: false,
@@ -542,6 +616,80 @@
                     error: function (xhr) {
                         finishedLoading("#confirm-room-deactivate", "Archive");
                         hideModal("#deactivate-room-modal");
+                        showDangerNotification(response.title, response.content);
+                    }
+                });
+            });
+        });
+
+        $("table").on('click', '#delete', function (e) {
+            e.preventDefault();
+            showModal("#delete-room-modal");
+
+            var id = $(this).data("id");
+            $("#confirm-room-delete").off().click(function (e) {
+                loading("#confirm-room-delete");
+                $.ajax({
+                    type: "DELETE",
+                    url: "{{ route('room_management') }}" + "/destroy/" + id,
+                    data: { submit: true },
+                    dataType: "json",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        switch(response.status){
+                            case 1:
+                                showSuccessNotification(response.title, response.content);
+                                break;
+                            default:
+                                showDangerNotification(response.title, response.content);
+                                break;
+                        }
+                        finishedLoading("#confirm-room-delete", "Delete");
+                        hideModal("#delete-room-modal");
+                        table.ajax.reload();
+                    },
+                    error: function (xhr) {
+                        finishedLoading("#confirm-room-delete", "Delete");
+                        hideModal("#delete-room-modal");
+                        showDangerNotification(response.title, response.content);
+                    }
+                });
+            });
+        });
+
+        $("table").on('click', '#restore', function (e) {
+            e.preventDefault();
+            showModal("#restore-room-modal");
+
+            var id = $(this).data("id");
+            $("#confirm-room-restore").off().click(function (e) {
+                loading("#confirm-room-restore");
+                $.ajax({
+                    type: "PATCH",
+                    url: "{{ route('room_management') }}" + "/restore/" + id,
+                    data: { submit: true },
+                    dataType: "json",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        switch(response.status){
+                            case 1:
+                                showSuccessNotification(response.title, response.content);
+                                break;
+                            default:
+                                showDangerNotification(response.title, response.content);
+                                break;
+                        }
+                        finishedLoading("#confirm-room-restore", "Restore");
+                        hideModal("#restore-room-modal");
+                        table.ajax.reload();
+                    },
+                    error: function (xhr) {
+                        finishedLoading("#confirm-room-restore", "Restore");
+                        hideModal("#restore-room-modal");
                         showDangerNotification(response.title, response.content);
                     }
                 });
