@@ -128,12 +128,12 @@
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label for="create-room-number" class="form-label">Room Number</label>
-                        <input id="create-room-number" type="number" class="form-control" name="number" placeholder="1000">
+                        <label for="create-number" class="form-label">Room Number</label>
+                        <input id="create-number" type="number" class="form-control" name="number" placeholder="1000">
                         <span class="validation-error error-number {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <div class="mb-4"> <label>Room Type</label>
-                        <select class="form-select" name="type">
+                        <select id="edit-type" class="form-select" name="type">
                             @foreach(\App\Models\RoomType::all() as $room)
                             <option value="{{ $room->type }}">{{ $room->type }}</option>
                             @endforeach
@@ -141,19 +141,19 @@
                         <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <div class="mb-4"> <label>Floor</label>
-                        <select class="form-select" name="floor">
+                        <select id="edit-floor" class="form-select" name="floor">
                             @for($i = 1; $i <= 30; $i++) <option value="{{ $i }}">Floor {{ $i }}</option> @endfor
                         </select>
                         <span class="validation-error error-floor {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <div class="mb-4">
-                        <label for="create-room-number" class="form-label">Price/Rate</label>
-                        <input id="create-room-number" type="number" class="form-control" name="rate" step="0.01" placeholder="7500.00">
+                        <label for="create-rate" class="form-label">Price/Rate</label>
+                        <input id="create-rate" type="number" class="form-control" name="rate" step="0.01" placeholder="7500.00">
                         <span class="validation-error error-rate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <div class="mb-4">
-                        <label for="create-address" class="form-label">Description</label>
-                        <textarea id="create-address" type="text" class="form-control" name="description" placeholder="A standard one person room"></textarea>
+                        <label for="create-description" class="form-label">Description</label>
+                        <textarea id="create-description" type="text" class="form-control" name="description" placeholder="A standard one person room"></textarea>
                         <span class="validation-error error-description {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <button type="submit" id="create-form-submit" class="btn btn-primary w-full mr-1 mb-2">Submit</button>
@@ -163,6 +163,66 @@
     </div>
 </div>
 <!-- END: Create new Hotel Room Modal -->
+<!-- BEGIN: Edit Hotel Room Modal -->
+<div id="edit-room-modal" class="modal modal-slide-over" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content"> <a data-tw-dismiss="modal" href="javascript:;"> <i data-feather="x" class="w-8 h-8 text-slate-400"></i> </a>
+            <div class="modal-header p-5">
+                <h2 class="font-medium text-base mr-auto">Edit Room</h2>
+            </div>
+            <div class="modal-body">
+                <form id="edit-image-upload" method="POST">
+                    @csrf
+                    <input type="file" id="edit-thumbnail-upload" accept="image/*,image/heif,image/heic" name="image" hidden>
+                </form>
+                <form id="edit-form" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <div class="flex justify-center mb-4">
+                        <div class="w-56">
+                            <div class="w-56 h-56 image-fit zoom-in">
+                                <img src="{{ asset('/storage/static/images/nothumb.jpg') }}" id="edit-thumbnail-preview" class="rounded-lg">
+                            </div>
+                            <button type="button" id="thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Thumbnail</button>
+                            <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-number" class="form-label">Room Number</label>
+                        <input id="edit-number" type="number" class="form-control" name="number" placeholder="1000">
+                        <span class="validation-error error-number {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                    </div>
+                    <div class="mb-4"> <label>Room Type</label>
+                        <select id="edit-type" class="form-select" name="type">
+                            @foreach(\App\Models\RoomType::all() as $room)
+                            <option value="{{ $room->type }}">{{ $room->type }}</option>
+                            @endforeach
+                        </select>
+                        <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                    </div>
+                    <div class="mb-4"> <label>Floor</label>
+                        <select id="edit-floor" class="form-select" name="floor">
+                            @for($i = 1; $i <= 30; $i++) <option value="{{ $i }}">Floor {{ $i }}</option> @endfor
+                        </select>
+                        <span class="validation-error error-floor {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-rate" class="form-label">Price/Rate</label>
+                        <input id="edit-rate" type="number" class="form-control" name="rate" step="0.01" placeholder="7500.00">
+                        <span class="validation-error error-rate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-description" class="form-label">Description</label>
+                        <textarea id="edit-description" type="text" class="form-control" name="description" placeholder="A standard one person room"></textarea>
+                        <span class="validation-error error-description {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                    </div>
+                    <button type="submit" id="edit-form-submit" class="btn btn-primary w-full mr-1 mb-2">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Edit Hotel Room Modal -->
 <!-- BEGIN: Crop Image for Upload Modal -->
 <div id="image-crop-modal" class="modal" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -301,7 +361,12 @@
         });
 
         function clearCreateModal(){
-            $('#create-form').trigger("reset");;
+            $('#create-form').trigger("reset");
+            $('span.validation-error').text('');
+        }
+
+        function clearEditModal(){
+            $('#edit-form').trigger("reset");
             $('span.validation-error').text('');
         }
 
@@ -696,6 +761,59 @@
             });
         });
 
+        $('table').on('click', '#edit', function () {
+            var id = $(this).data("id");
+            $.ajax({
+                type: "POST",
+                url: "{{ route('room_management') }}" + '/edit/' + id,
+                data: { submit: true },
+                dataType: "json",
+                success: function (response) {
+                    console.log(response.data);
+                    $.each(response.data, function (i, v) {
+                        $('#edit-form').find('#edit-'+i).val(v);
+                    });
+                    $('#edit-thumbnail-preview').attr('src', response.parsed.location);
+
+                    $("#edit-form").submit(function (e) {
+                        e.preventDefault();
+
+                        const editForm = document.getElementById("edit-form");
+                        const editFormData = new FormData(editForm);
+
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('room_management') }}" + '/update/' + id,
+                            data: editFormData,
+                            dataType: "json",
+                            cache: false,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if(response.status == 1){
+                                    finishedLoading("#edit-form-submit", "Submit");
+                                    hideSlideover("#edit-room-modal")
+                                    clearEditModal();
+                                    showSuccessNotification(response.title, response.content);
+                                    table.ajax.reload();
+                                }
+                            },
+                            error: function (xhr) {
+                                if(xhr.status == 422){
+                                    var errors = xhr.responseJSON.errors;
+                                    $('#edit-form').find('span.validation-error').text('');
+                                    $.each(errors, function (s, v) {
+                                        $('#edit-form').find('span.error-'+s).text(v[0]);
+                                    });
+                                }
+                                finishedLoading("#edit-form-submit", "Submit");
+                            }
+                        });
+                    });
+                }
+            });
+            showSlideover('#edit-room-modal');
+        });
     });
 </script>
 @endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Functions;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRoomRequest;
+use App\Http\Requests\UpdateRoomRequest;
 use App\Models\Room;
 use Exception;
 use Illuminate\Http\Request;
@@ -11,15 +12,6 @@ use Illuminate\Support\Str;
 
 class RoomManagementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -82,7 +74,25 @@ class RoomManagementController extends Controller
      */
     public function edit($id)
     {
-        //
+        if (request()->ajax()) {
+            $room = Room::withTrashed()->where('id', $id)->first();
+            if (request()->isMethod('post')) {
+                return response()->json([
+                    'status' => 1,
+                    'message' => 'Successfully retrieved data of Hotel Room #' . $room->number . '.',
+                    'data' => $room,
+                    'parsed' => [
+                        'location' => empty($room->media) ? asset('storage/static/images') . '/nothumb.jpg' : (file_exists(public_path() . '/storage/static/thumbnails/' . $room->media) ? asset('storage/static/thumbnails') . '/' . $room->media : asset('storage/static/images') . '/nothumb.jpg'),
+                    ]
+                ]);
+            }
+            return response()->json([
+                'status' => 0,
+                'title' => 'Operation successful',
+                'content' => 'Unable to retrieve data of Hotel Room #' . $room->number . '.'
+            ]);
+        }
+        return abort(404);
     }
 
     /**
@@ -92,9 +102,19 @@ class RoomManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRoomRequest $request, $id)
     {
-        //
+        if (request()->ajax()) {
+            $room = Room::withTrashed()->where('id', $id)->first();
+            Room::withTrashed()->where('id', $id)->update($request->validated());
+
+            return response()->json([
+                'status' => 1,
+                'title' => 'Operation successful',
+                'content' => 'Hotel Room # ' . $room->number . ' has been updated successfuly.'
+            ]);
+        }
+        return abort(404);
     }
 
     /**

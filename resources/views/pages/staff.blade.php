@@ -317,12 +317,12 @@
         });
 
         function clearCreateModal(){
-            $('#create-form').trigger("reset");;
+            $('#create-form').trigger("reset");
             $('span.validation-error').text('');
         }
 
         function clearEditModal(){
-            $('#edit-form').trigger("reset");;
+            $('#edit-form').trigger("reset");
             $('span.validation-error').text('');
         }
 
