@@ -183,7 +183,7 @@
                             <div class="w-56 h-56 image-fit zoom-in">
                                 <img src="{{ asset('/storage/static/images/nothumb.jpg') }}" id="edit-thumbnail-preview" class="rounded-lg">
                             </div>
-                            <button type="button" id="thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Thumbnail</button>
+                            <button type="button" id="edit-thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Thumbnail</button>
                             <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                         </div>
                     </div>
@@ -455,9 +455,13 @@
             $("#thumbnail-upload").trigger('click');
         });
 
+        $("#edit-thumbnail-upload-trigger").click(function (e) {
+            $("#edit-thumbnail-upload").trigger('click');
+        });
+
         $("#thumbnail-upload").off().change(function (e) {
             e.preventDefault();
-
+            loading("#thumbnail-upload-trigger");
             let form = document.getElementById("image-upload")
             let fd = new FormData(form);
             $.ajax({
@@ -478,6 +482,7 @@
                             success: function (response) {
                                 showModal('#image-crop-modal');
                                 $("#picture-preview").attr("src", response.location);
+                                finishedLoading("#thumbnail-upload-trigger", "Upload Thumbnail");
                                 var $image = $('#picture-preview');
 
                                 $image.cropper({
@@ -536,9 +541,9 @@
                                 var cropper = $image.data('cropper');
                                 $("#upload-cropped-image").click(function (e) {
                                     e.preventDefault();
-
                                     showModal("#confirm-upload-modal");
                                         $(".confirm-cropped-upload").off().click(function (e) {
+                                            loading("#upload-cropped-image");
                                             $image.cropper("getCroppedCanvas").toBlob((blob) => {
                                             createFormImage.append('image', blob);
 
@@ -554,6 +559,7 @@
                                                 processData: false,
                                                 contentType: false,
                                                 success: function (response) {
+                                                    finishedLoading("#upload-cropped-image", "Save");
                                                     hideModal("#image-crop-modal");
                                                     $("#thumbnail-preview").attr("src", response.location);
                                                     $("#thumbnail-upload").val(null);
@@ -769,17 +775,168 @@
                 data: { submit: true },
                 dataType: "json",
                 success: function (response) {
-                    console.log(response.data);
+                    const editThumbnailData = new FormData();
                     $.each(response.data, function (i, v) {
                         $('#edit-form').find('#edit-'+i).val(v);
                     });
+
+                    $("#edit-rate").val(response.parsed.rate);
                     $('#edit-thumbnail-preview').attr('src', response.parsed.location);
 
-                    $("#edit-form").submit(function (e) {
+                    $("#edit-thumbnail-upload").off().change(function (e) {
+                        e.preventDefault();
+                        loading("#edit-thumbnail-upload-trigger");
+                        let form = document.getElementById("edit-image-upload")
+                        let fd = new FormData(form);
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('thumbnail.store') }}",
+                            data: fd,
+                            dataType: "json",
+                            cache: false,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if(response.status == 1){
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "{{ route('thumbnail.show') }}",
+                                        data: { submit: true },
+                                        dataType: "json",
+                                        success: function (response) {
+                                            showModal('#image-crop-modal');
+                                            $("#picture-preview").attr("src", response.location);
+                                            finishedLoading("#edit-thumbnail-upload-trigger", "Upload Thumbnail");
+                                            var $image = $('#picture-preview');
+
+                                            $image.cropper({
+                                                aspectRatio: 1/1,
+                                                dragMode: 'move',
+                                                viewMode: 1,
+                                                autoCropArea: 1,
+                                                responsive: true,
+                                                restore: false,
+                                                guides: false,
+                                                center: false,
+                                                highlight: false,
+                                                cropBoxMovable: false,
+                                                cropBoxResizable: false,
+                                                toggleDragModeOnDblclick: false,
+                                                zoomOnWheel: false,
+                                                ready: function() {
+                                                    // var canvasData = $image.cropper('getCanvasData');
+                                                    var cropBoxData = $image.cropper('getCropBoxData');
+                                                    var imageData = $image.cropper('getImageData');
+
+                                                    rangeSlider.noUiSlider.updateOptions({
+                                                        range: {
+                                                            'min': imageData.width / imageData.naturalWidth,
+                                                            'max': 1.667,
+                                                        }
+                                                    });
+
+                                                    rangeSlider.noUiSlider.set([imageData.width / imageData.naturalWidth]);
+
+                                                    rangeSlider.noUiSlider.on('slide', function () {
+                                                        $image.cropper('zoomTo', rangeSlider.noUiSlider.get());
+                                                    });
+
+                                                    $(window).resize(function () {
+                                                        if(window.innerWidth < 1023) {
+                                                            rangeSlider.noUiSlider.updateOptions({
+                                                                range: {
+                                                                    'min': $(".cropper-crop-box").width() / imageData.naturalWidth,
+                                                                    'max': 1.667,
+                                                                }
+                                                            });
+                                                        }
+                                                        else {
+                                                            rangeSlider.noUiSlider.updateOptions({
+                                                                range: {
+                                                                    'min': imageData.width / imageData.naturalWidth,
+                                                                    'max': 1.667,
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                },
+                                            });
+
+                                            var cropper = $image.data('cropper');
+                                            $("#upload-cropped-image").click(function (e) {
+                                                e.preventDefault();
+                                                showModal("#confirm-upload-modal");
+                                                    $(".confirm-cropped-upload").off().click(function (e) {
+                                                        loading("#upload-cropped-image");
+                                                        $image.cropper("getCroppedCanvas").toBlob((blob) => {
+                                                        editThumbnailData.append('image', blob);
+
+                                                        const fd = new FormData();
+                                                        fd.append('image', blob);
+
+                                                        $.ajax({
+                                                            type: "POST",
+                                                            url: "{{ route('thumbnail.store') }}",
+                                                            data: fd,
+                                                            dataType: "json",
+                                                            cache: false,
+                                                            processData: false,
+                                                            contentType: false,
+                                                            success: function (response) {
+                                                                finishedLoading("#upload-cropped-image", "Save");
+                                                                hideModal("#image-crop-modal");
+                                                                $("#edit-thumbnail-preview").attr("src", response.location);
+                                                                $("#edit-thumbnail-upload").val(null);
+                                                                $("#picture-preview").removeAttr("src");
+                                                                $image.cropper("destroy");
+                                                                rangeSlider.noUiSlider.reset();
+                                                            }
+                                                        });
+                                                    });
+                                                });
+                                            });
+
+                                            $("#x-dismiss-modal, #cancel-dismiss-modal").click(function (e) {
+                                                showModal("#discard-upload-modal");
+                                                $("#confirm-discard-upload").off().click(function (e) {
+                                                    $("#edit-thumbnail-upload").val(null);
+                                                    $("#picture-preview").removeAttr("src");
+                                                    $image.cropper("destroy");
+                                                    $.ajax({
+                                                        type: "POST",
+                                                        url: "{{ route('thumbnail.destroy') }}",
+                                                        data: { submit: true },
+                                                        dataType: "json",
+                                                        success: function (response) {
+                                                            hideModal("#image-crop-modal");
+                                                            hideModal("#discard-upload-modal");
+                                                            rangeSlider.noUiSlider.reset();
+                                                        },
+                                                    });
+                                                });
+                                            });
+                                        }
+                                    });
+                                }
+                            },
+                            error: function (xhr) {
+                                if(xhr.status == 422){
+                                    showModal("#error-modal");
+                                    $("#edit-thumbnail-upload").val(null);
+                                }
+                            }
+                        });
+                    });
+
+                    $("#edit-form").off().submit(function (e) {
                         e.preventDefault();
 
                         const editForm = document.getElementById("edit-form");
                         const editFormData = new FormData(editForm);
+
+                        if(editThumbnailData.get('image') != null){
+                            editFormData.append('image', editThumbnailData.get('image'));
+                        }
 
                         $.ajax({
                             type: "POST",
@@ -790,6 +947,9 @@
                             processData: false,
                             contentType: false,
                             success: function (response) {
+                                if(editThumbnailData.get('image') != null){
+                                    editFormData.delete('image');
+                                }
                                 if(response.status == 1){
                                     finishedLoading("#edit-form-submit", "Submit");
                                     hideSlideover("#edit-room-modal")

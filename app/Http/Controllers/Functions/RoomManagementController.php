@@ -83,6 +83,7 @@ class RoomManagementController extends Controller
                     'data' => $room,
                     'parsed' => [
                         'location' => empty($room->media) ? asset('storage/static/images') . '/nothumb.jpg' : (file_exists(public_path() . '/storage/static/thumbnails/' . $room->media) ? asset('storage/static/thumbnails') . '/' . $room->media : asset('storage/static/images') . '/nothumb.jpg'),
+                        'rate' => $room->rate / 100,
                     ]
                 ]);
             }
@@ -106,7 +107,20 @@ class RoomManagementController extends Controller
     {
         if (request()->ajax()) {
             $room = Room::withTrashed()->where('id', $id)->first();
-            Room::withTrashed()->where('id', $id)->update($request->validated());
+
+            $validated = $request->validated();
+            $validated['rate'] = $request->rate * 100;
+
+            if (!empty($request->image) || $request->image != null) {
+                $file = $request->file('image');
+
+                $filename = Str::random(30) . ".jpg";
+                $path = $file->storeAs('public/static/thumbnails', $filename);
+
+                $validated['media'] = $filename;
+            }
+
+            Room::withTrashed()->where('id', $id)->update($validated);
 
             return response()->json([
                 'status' => 1,
