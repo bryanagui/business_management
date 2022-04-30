@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class StaffController extends Controller
@@ -146,6 +147,13 @@ class StaffController extends Controller
             try {
                 if (request()->isMethod('delete')) {
                     $user = User::where('id', $id)->first();
+                    if ($id == Auth::user()->id) {
+                        return response()->json([
+                            'status' => 0,
+                            'title' => 'Operation failed',
+                            'content' => 'You cannot archive yourself.'
+                        ]);
+                    }
                     if ($id != 1) {
                         User::where('id', $id)->delete();
 
