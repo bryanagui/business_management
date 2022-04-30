@@ -23,7 +23,7 @@
     <div class="intro-y col-span-12 lg:col-span-8">
         <div class="lg:flex intro-y">
             <div class="relative">
-                <input type="text" class="form-control py-3 px-4 w-full lg:w-64 box pr-10" placeholder="Search item...">
+                <input type="text" class="form-control py-3 px-4 w-full lg:w-64 box pr-10 product-search" placeholder="Search item...">
                 <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-500" data-feather="search"></i>
             </div>
         </div>
@@ -59,7 +59,7 @@
         </div>
         <div class="grid grid-cols-12 gap-5 mt-5 pt-5 border-t">
             @foreach (array_slice($fakers, 0, 8) as $faker)
-            <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#add-item-modal" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3">
+            <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#add-item-modal" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">
                 <div class="box rounded-md p-3 relative zoom-in">
                     <div class="flex-none relative block before:block before:w-full before:pt-[100%]">
                         <div class="absolute top-0 left-0 w-full h-full image-fit">
@@ -224,4 +224,17 @@
     </div>
 </div>
 <!-- END: Add Item Modal -->
+@endsection
+
+@section('script')
+<script>
+    $(document).ready(function () {
+        $(".product-search").on("keyup", function () {
+            let val = $(this).val().toLowerCase();
+            $(".product").filter(function(){
+                $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1);
+            });
+        });
+    });
+</script>
 @endsection
