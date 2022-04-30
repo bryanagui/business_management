@@ -16,7 +16,7 @@
             <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
                 <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 flex-none lg:w-32 lg:h-32 image-fit relative">
-                        <img alt="Profile Picture" class="rounded-full profile-picture" src="{{ empty(Auth::user()->photo) ? asset('storage/static/images') . '/null.jpg' : asset('storage/static/images') . '/' . Auth::user()->photo }}">
+                        <img alt="Profile Picture" class="rounded-full profile-picture" src="{{ empty(Auth::user()->photo) ? asset('storage/static/images') . '/null.jpg' : asset('storage/static/images') . '/' . Auth::user()->photo }}" data-action="zoom">
                         <div class="absolute mb-1 mr-1 flex items-center justify-center bottom-0 right-0 bg-primary rounded-full p-2">
                             <form id="image-upload" method="POST">
                                 @csrf
@@ -438,8 +438,7 @@
         }
 
         function finishedLoadingUploadButton(selector){
-            $(selector).html('<i class="w-4 h-4 text-white" data-feather="camera"></i>');
-            tailwind.svgLoader();
+            $(selector).html('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera w-4 h-4 text-white"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>');
             $(selector).removeAttr("disabled")
         }
 
@@ -462,7 +461,7 @@
 
         $("#dp-file-upload").off().change(function (e) {
             e.preventDefault();
-
+            loading(".change-dp")
             let form = document.getElementById("image-upload")
             let fd = new FormData(form);
             $.ajax({
@@ -474,6 +473,7 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
+                    finishedLoadingUploadButton(".change-dp")
                     if(response.status == 1){
                         $.ajax({
                             type: "POST",
