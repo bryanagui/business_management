@@ -14,13 +14,15 @@ class RoomTypeSeeder extends Seeder
      */
     public function run()
     {
+        RoomType::create(['type' => 'Single']);
+        RoomType::create(['type' => 'Double']);
+        RoomType::create(['type' => 'Quad']);
         RoomType::create(['type' => 'Studio']);
-        RoomType::create(['type' => 'Murphy']);
-        RoomType::create(['type' => 'King']);
-        RoomType::create(['type' => 'Queen']);
         RoomType::create(['type' => 'Junior']);
+        RoomType::create(['type' => 'Queen']);
+        RoomType::create(['type' => 'King']);
+        RoomType::create(['type' => 'Master']);
         RoomType::create(['type' => 'Executive']);
-        RoomType::create(['type' => 'Extended']);
         RoomType::create(['type' => 'Presidential']);
     }
 }

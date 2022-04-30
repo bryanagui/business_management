@@ -331,12 +331,8 @@
             columns: [
                 {data: "id", name: "id"},
                 {data: "photo", name: "photo"},
-                {data: "number", render: function(data, type, full, meta){
-                    return '<span class="whitespace-nowrap">'+ 'Room #' + full.number +'</span>'
-                }},
-                {data: "floor", render: function(data, type, full, meta){
-                    return '<span class="whitespace-nowrap">'+ 'Floor #' + full.floor +'</span>'
-                }},
+                {data: "number", name: "number"},
+                {data: "floor", name: "floor"},
                 {data: "type", name: "type"},
                 {data: "description", name: "description"},
                 {data: "rate", name: "rate"},
@@ -599,6 +595,7 @@
                     if(xhr.status == 422){
                         showModal("#error-modal");
                         $("#thumbnail-upload").val(null);
+                        finishedLoading("#thumbnail-upload-trigger", "Upload Thumbnail");
                     }
                 }
             });
@@ -923,6 +920,7 @@
                                 if(xhr.status == 422){
                                     showModal("#error-modal");
                                     $("#edit-thumbnail-upload").val(null);
+                                    finishedLoading("#edit-thumbnail-upload-trigger", "Upload Thumbnail");
                                 }
                             }
                         });

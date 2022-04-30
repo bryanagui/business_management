@@ -54,12 +54,8 @@
             columns: [
                 {data: "id", name: "id"},
                 {data: "photo", name: "photo"},
-                {data: "number", render: function(data, type, full, meta){
-                    return '<span class="font-medium whitespace-nowrap">'+ 'Room #' + full.number +'</span>'
-                }},
-                {data: "floor", render: function(data, type, full, meta){
-                    return '<span class="font-medium whitespace-nowrap">'+ 'Floor #' + full.floor +'</span>'
-                }},
+                {data: "number", name: "number"},
+                {data: "floor", name: "floor"},
                 {data: "type", name: "type"},
                 {data: "description", name: "description"},
                 {data: "rate", name: "rate"},

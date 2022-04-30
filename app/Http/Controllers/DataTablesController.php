@@ -102,6 +102,12 @@ class DataTablesController extends Controller
 
                     return "<div class='flex justify-center'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-lg' src='" . $source . "'></div></div>";
                 })
+                ->addCOlumn('number', function ($row) {
+                    return "Room No. " . $row->number;
+                })
+                ->addCOlumn('floor', function ($row) {
+                    return "Floor No. " . $row->floor;
+                })
                 ->addColumn('rate', function ($row) {
                     return '₱' . number_format($row->rate / 100, 2);
                 })
