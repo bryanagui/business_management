@@ -148,7 +148,7 @@ class DataTablesController extends Controller
                             $source = asset('storage/static/images') . '/nothumb.jpg';
                             break;
                         case false:
-                            file_exists(public_path() . '/storage/static/thumbnails/' . $row->media) ? $source = asset('storage/static/thumbnails') . '/' . $row->media : $source = asset('storage/static/images') . '/nothumb.jpg';
+                            file_exists(public_path() . '/storage/static/product_images/' . $row->media) ? $source = asset('storage/static/product_images') . '/' . $row->media : $source = asset('storage/static/images') . '/nothumb.jpg';
                             break;
                     }
 

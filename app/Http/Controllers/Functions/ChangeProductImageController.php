@@ -3,38 +3,40 @@
 namespace App\Http\Controllers\Functions;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ChangePhotoRequest;
-use App\Models\ImageUpload;
-use App\Models\User;
+use App\Http\Requests\ChangeProductImageRequest;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
-class ChangePictureController extends Controller
+class ChangeProductImageController extends Controller
 {
     /**
      * Store a newly created resource in storage.
      *
-     * @param  App\Http\Requests\ChangePhotoRequest  $request
+     * @param  \Illuminate\Http\ChangeThumbnailRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ChangePhotoRequest $request)
+    public function store(ChangeProductImageRequest $request)
     {
         if (request()->ajax()) {
             $file = $request->file('image');
 
-            $filename = Str::random(35) . "." . $file->getClientOriginalExtension();
-            $path = $file->storeAs('public/static/uploaded', $filename);
+            $filename = Str::random(35) . ".jpg";
+            $path = $file->storeAs('public/static/temp_products', $filename);
 
-            ImageUpload::create([
+            ProductImage::create([
                 'user_id' => Auth::user()->id,
                 'media' => $filename
             ]);
 
+            $preview = ProductImage::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->first();
+
             return response()->json([
                 'status' => 1,
                 'message' => 'Uploaded successfully.',
+                'location' => asset('/storage/static/temp_products') . '/' . $preview->media,
             ]);
         }
         return abort(404);
@@ -49,12 +51,11 @@ class ChangePictureController extends Controller
     public function show()
     {
         if (request()->ajax()) {
-            $uploaded = ImageUpload::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->first();
+            $uploaded = ProductImage::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->first();
             return response()->json([
                 'status' => 1,
                 'message' => 'Image retrieved successfully.',
-                'location' => asset('/storage/static/uploaded') . '/' . $uploaded->media
-
+                'location' => asset('/storage/static/temp_products') . '/' . $uploaded->media
             ]);
         }
         return abort(404);
@@ -73,17 +74,18 @@ class ChangePictureController extends Controller
             $file = $request->file('image');
 
             $filename = Str::random(30) . ".jpg";
-            $path = $file->storeAs('public/static/images', $filename);
+            $path = $file->storeAs('public/static/temp_products', $filename);
 
-            User::where('id', Auth::user()->id)->update([
-                'photo' => $filename
+            ProductImage::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->first()->update([
+                'media' => $filename
             ]);
 
-            $user = User::where('id', Auth::user()->id)->get();
+            $uploaded = ProductImage::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->first();
+
             return response()->json([
                 'status' => 1,
-                'message' => 'Updated profile picture successfully.',
-                'image' => asset('storage/static/images') . '/' . $user[0]->photo
+                'message' => 'Image retrieved successfully.',
+                'location' => asset('/storage/static/temp_products') . '/' . $uploaded[0]->media
             ]);
         }
         return abort(404);
@@ -98,16 +100,16 @@ class ChangePictureController extends Controller
     public function destroy()
     {
         if (request()->ajax()) {
-            $images = ImageUpload::where('user_id', Auth::user()->id)->get();
+            $images = ProductImage::where('user_id', Auth::user()->id)->get();
             if (!empty($images)) {
                 foreach ($images as $image) {
-                    Storage::delete(['/public/static/uploaded/' . $image->media]);
+                    Storage::delete(['/public/static/temp_products/' . $image->media]);
                 }
             }
-            ImageUpload::where('user_id', Auth::user()->id)->delete();
+            ProductImage::where('user_id', Auth::user()->id)->delete();
 
             return response()->json([
-                'status' => 1,
+                'status' => 0,
                 'message' => 'Operation cancelled.',
             ]);
         }

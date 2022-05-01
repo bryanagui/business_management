@@ -28,45 +28,23 @@
             </div>
         </div>
         <div class="grid grid-cols-12 gap-5 mt-5">
+            @foreach(\App\Models\ProductCategory::all() as $category)
             <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
-                <div class="font-medium text-base">Soup</div>
-                <div class="text-slate-500">5 Items</div>
+                <div class="font-medium text-base">{{ $category->name }}</div>
+                {{-- <div class="text-slate-500"></div> --}}
             </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box bg-primary p-5 cursor-pointer zoom-in">
-                <div class="font-medium text-base text-white">Pancake & Toast</div>
-                <div class="text-white text-opacity-80 dark:text-slate-500">8 Items</div>
-            </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
-                <div class="font-medium text-base">Pasta</div>
-                <div class="text-slate-500">4 Items</div>
-            </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
-                <div class="font-medium text-base">Waffle</div>
-                <div class="text-slate-500">3 Items</div>
-            </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
-                <div class="font-medium text-base">Snacks</div>
-                <div class="text-slate-500">8 Items</div>
-            </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
-                <div class="font-medium text-base">Deserts</div>
-                <div class="text-slate-500">8 Items</div>
-            </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
-                <div class="font-medium text-base">Beverage</div>
-                <div class="text-slate-500">9 Items</div>
-            </div>
+            @endforeach
         </div>
         <div class="grid grid-cols-12 gap-5 mt-5 pt-5 border-t">
-            @foreach (array_slice($fakers, 0, 8) as $faker)
-            <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#add-item-modal" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">
+            @foreach(\App\Models\Product::all() as $product)
+            <a href="javascript:;" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">
                 <div class="box rounded-md p-3 relative zoom-in">
                     <div class="flex-none relative block before:block before:w-full before:pt-[100%]">
                         <div class="absolute top-0 left-0 w-full h-full image-fit">
-                            <img alt="Rubick Tailwind HTML Admin Template" class="rounded-md" src="{{ asset('dist/images/' . $faker['foods'][0]['image']) }}">
+                            <img alt="Rubick Tailwind HTML Admin Template" class="rounded-md" src="{{ empty($product->media) ? asset('storage/static/images') . '/nothumb.jpg' : asset('storage/static/product_images') . '/' . $product->media }}">
                         </div>
                     </div>
-                    <div class="block font-medium text-center truncate mt-3">{{ $faker['foods'][0]['name'] }}</div>
+                    <div class="block font-medium text-center truncate mt-3">{{ $product->name }}</div>
                 </div>
             </a>
             @endforeach

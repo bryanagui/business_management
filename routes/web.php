@@ -7,7 +7,9 @@ use App\Http\Controllers\DarkModeController;
 use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\DataTablesController;
 use App\Http\Controllers\Functions\ChangePictureController;
+use App\Http\Controllers\Functions\ChangeProductImageController;
 use App\Http\Controllers\Functions\ChangeThumbnailController;
+use App\Http\Controllers\Functions\InventoryController;
 use App\Http\Controllers\Functions\StaffController;
 use App\Http\Controllers\Functions\RoomManagementController;
 
@@ -90,11 +92,17 @@ Route::middleware('auth')->group(function () {
         });
         // END: Room Management Resource Requests
 
-        // BEGIN: Staff Resource Requests
+        // BEGIN: Inventory Resource Requests
         Route::group(['prefix' => 'inventory'], function () {
             Route::get('/', [PageController::class, 'inventory'])->name('inventory');
+            Route::post('store', [InventoryController::class, 'store'])->name('inventory.store'); // CREATE
+            Route::post('edit/{id}', [InventoryController::class, 'edit'])->name('inventory.edit'); // READ
+            Route::patch('update/{id}', [InventoryController::class, 'update'])->name('inventory.update'); // UPDATE
+            Route::delete('archive/{id}', [InventoryController::class, 'archive'])->name('inventory.archive'); // DELETE (Archive)
+            Route::delete('destroy/{id}', [InventoryController::class, 'destroy'])->name('inventory.destroy'); // DELETE (Force Delete)
+            Route::patch('restore/{id}', [InventoryController::class, 'restore'])->name('inventory.restore'); // DELETE (Restore)
         });
-        // END: Staff Resource Requests
+        // END: Inventory Resource Requests
 
         // BEGIN: Change Thumbnail Resource Requests
         Route::group(['prefix' => 'thumbnail'], function () {
@@ -104,6 +112,15 @@ Route::middleware('auth')->group(function () {
             Route::post('destroy', [ChangeThumbnailController::class, 'destroy'])->name('thumbnail.destroy'); // CREATE
         });
         // END: Change Thumbnail Resource Requests
+
+        // BEGIN: Change Product Image Resource Requests
+        Route::group(['prefix' => 'products'], function () {
+            Route::post('store', [ChangeProductImageController::class, 'store'])->name('products.store'); // CREATE
+            Route::post('show', [ChangeProductImageController::class, 'show'])->name('products.show'); // READ
+            Route::post('update', [ChangeProductImageController::class, 'update'])->name('products.update'); // UPDATE
+            Route::post('destroy', [ChangeProductImageController::class, 'destroy'])->name('products.destroy'); // CREATE
+        });
+        // END: Change Product Image Resource Requests
 
     });
 });

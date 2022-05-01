@@ -108,52 +108,46 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content"> <a data-tw-dismiss="modal" href="javascript:;"> <i data-feather="x" class="w-8 h-8 text-slate-400"></i> </a>
             <div class="modal-header p-5">
-                <h2 class="font-medium text-base mr-auto">Add New Room</h2>
+                <h2 class="font-medium text-base mr-auto">Add New Product</h2>
             </div>
             <div class="modal-body">
                 <form id="image-upload" method="POST">
                     @csrf
                     <input type="file" id="thumbnail-upload" accept="image/*,image/heif,image/heic" name="image" hidden>
                 </form>
-                <form id="create-form" action="{{ route('room_management.store') }}" method="POST">
+                <form id="create-form" action="{{ route('inventory.store') }}" method="POST">
                     @csrf
                     <div class="flex justify-center mb-4">
                         <div class="w-56">
                             <div class="w-56 h-56 image-fit zoom-in">
                                 <img src="{{ asset('/storage/static/images/nothumb.jpg') }}" id="thumbnail-preview" class="rounded-lg">
                             </div>
-                            <button type="button" id="thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Thumbnail</button>
+                            <button type="button" id="thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Image</button>
                             <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <label for="create-number" class="form-label">Room Number</label>
-                        <input id="create-number" type="number" class="form-control" name="number" placeholder="1000">
-                        <span class="validation-error error-number {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
-                    </div>
-                    <div class="mb-4"> <label>Room Type</label>
-                        <select id="edit-type" class="form-select" name="type">
-                            @foreach(\App\Models\RoomType::all() as $room)
-                            <option value="{{ $room->type }}">{{ $room->type }}</option>
+                    <div class="mb-4"> <label>Category</label>
+                        <select id="edit-type" class="form-select" name="category">
+                            @foreach(\App\Models\ProductCategory::all() as $category)
+                            <option value="{{ $category->name }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
                         <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
-                    <div class="mb-4"> <label>Floor</label>
-                        <select id="edit-floor" class="form-select" name="floor">
-                            @for($i = 1; $i <= 30; $i++) <option value="{{ $i }}">Floor {{ $i }}</option> @endfor
-                        </select>
-                        <span class="validation-error error-floor {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                    <div class="mb-4">
+                        <label for="create-name" class="form-label">Product Name</label>
+                        <input id="create-name" type="text" class="form-control" name="name" placeholder="Yes, I am Sana 1st Photobook">
+                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <div class="mb-4">
-                        <label for="create-rate" class="form-label">Price/Rate</label>
-                        <input id="create-rate" type="number" class="form-control" name="rate" step="0.01" placeholder="7500.00">
-                        <span class="validation-error error-rate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <label for="create-price" class="form-label">Product Price</label>
+                        <input id="create-price" type="number" class="form-control" name="price" step="0.01" placeholder="2500.00">
+                        <span class="validation-error error-price {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <div class="mb-4">
-                        <label for="create-description" class="form-label">Description</label>
-                        <textarea id="create-description" type="text" class="form-control" name="description" placeholder="A standard one person room"></textarea>
-                        <span class="validation-error error-description {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <label for="create-stock" class="form-label">Stock</label>
+                        <input id="create-stock" type="number" class="form-control" name="stock" placeholder="1000">
+                        <span class="validation-error error-stock {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <button type="submit" id="create-form-submit" class="btn btn-primary w-full mr-1 mb-2">Submit</button>
                 </form>
@@ -167,7 +161,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content"> <a data-tw-dismiss="modal" href="javascript:;"> <i data-feather="x" class="w-8 h-8 text-slate-400"></i> </a>
             <div class="modal-header p-5">
-                <h2 class="font-medium text-base mr-auto">Edit Room</h2>
+                <h2 class="font-medium text-base mr-auto">Edit Product</h2>
             </div>
             <div class="modal-body">
                 <form id="edit-image-upload" method="POST">
@@ -182,38 +176,32 @@
                             <div class="w-56 h-56 image-fit zoom-in">
                                 <img src="{{ asset('/storage/static/images/nothumb.jpg') }}" id="edit-thumbnail-preview" class="rounded-lg">
                             </div>
-                            <button type="button" id="edit-thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Thumbnail</button>
+                            <button type="button" id="edit-thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Image</button>
                             <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <label for="edit-number" class="form-label">Room Number</label>
-                        <input id="edit-number" type="number" class="form-control" name="number" placeholder="1000">
-                        <span class="validation-error error-number {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
-                    </div>
-                    <div class="mb-4"> <label>Room Type</label>
-                        <select id="edit-type" class="form-select" name="type">
-                            @foreach(\App\Models\RoomType::all() as $room)
-                            <option value="{{ $room->type }}">{{ $room->type }}</option>
+                    <div class="mb-4"> <label>Category</label>
+                        <select id="edit-category" class="form-select" name="category">
+                            @foreach(\App\Models\ProductCategory::all() as $category)
+                            <option value="{{ $category->name }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
                         <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
-                    <div class="mb-4"> <label>Floor</label>
-                        <select id="edit-floor" class="form-select" name="floor">
-                            @for($i = 1; $i <= 30; $i++) <option value="{{ $i }}">Floor {{ $i }}</option> @endfor
-                        </select>
-                        <span class="validation-error error-floor {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                    <div class="mb-4">
+                        <label for="edit-name" class="form-label">Product Name</label>
+                        <input id="edit-name" type="text" class="form-control" name="name" placeholder="Yes, I am Sana 1st Photobook">
+                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <div class="mb-4">
-                        <label for="edit-rate" class="form-label">Price/Rate</label>
-                        <input id="edit-rate" type="number" class="form-control" name="rate" step="0.01" placeholder="7500.00">
-                        <span class="validation-error error-rate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <label for="edit-price" class="form-label">Product Price</label>
+                        <input id="edit-price" type="number" class="form-control" name="price" step="0.01" placeholder="2500.00">
+                        <span class="validation-error error-price {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <div class="mb-4">
-                        <label for="edit-description" class="form-label">Description</label>
-                        <textarea id="edit-description" type="text" class="form-control" name="description" placeholder="A standard one person room"></textarea>
-                        <span class="validation-error error-description {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <label for="edit-stock" class="form-label">Stock</label>
+                        <input id="edit-stock" type="number" class="form-control" name="stock" placeholder="1000">
+                        <span class="validation-error error-stock {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
                     </div>
                     <button type="submit" id="edit-form-submit" class="btn btn-primary w-full mr-1 mb-2">Submit</button>
                 </form>
@@ -460,7 +448,7 @@
             let fd = new FormData(form);
             $.ajax({
                 type: "POST",
-                url: "{{ route('thumbnail.store') }}",
+                url: "{{ route('products.store') }}",
                 data: fd,
                 dataType: "json",
                 cache: false,
@@ -470,13 +458,13 @@
                     if(response.status == 1){
                         $.ajax({
                             type: "POST",
-                            url: "{{ route('thumbnail.show') }}",
+                            url: "{{ route('products.show') }}",
                             data: { submit: true },
                             dataType: "json",
                             success: function (response) {
                                 showModal('#image-crop-modal');
                                 $("#picture-preview").attr("src", response.location);
-                                finishedLoading("#thumbnail-upload-trigger", "Upload Thumbnail");
+                                finishedLoading("#thumbnail-upload-trigger", "Upload Image");
                                 var $image = $('#picture-preview');
 
                                 $image.cropper({
@@ -546,7 +534,7 @@
 
                                             $.ajax({
                                                 type: "POST",
-                                                url: "{{ route('thumbnail.store') }}",
+                                                url: "{{ route('products.store') }}",
                                                 data: fd,
                                                 dataType: "json",
                                                 cache: false,
@@ -574,7 +562,7 @@
                                         $image.cropper("destroy");
                                         $.ajax({
                                             type: "POST",
-                                            url: "{{ route('thumbnail.destroy') }}",
+                                            url: "{{ route('products.destroy') }}",
                                             data: { submit: true },
                                             dataType: "json",
                                             success: function (response) {
@@ -593,7 +581,7 @@
                     if(xhr.status == 422){
                         showModal("#error-modal");
                         $("#thumbnail-upload").val(null);
-                        finishedLoading("#thumbnail-upload-trigger", "Upload Thumbnail");
+                        finishedLoading("#thumbnail-upload-trigger", "Upload Image");
                     }
                 }
             });
@@ -612,7 +600,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "{{ route('room_management.store') }}",
+                url: "{{ route('inventory.store') }}",
                 data: fd,
                 dataType: "json",
                 cache: false,
@@ -632,7 +620,7 @@
                         table.ajax.reload();
                         $.ajax({
                             type: "POST",
-                            url: "{{ route('thumbnail.destroy') }}",
+                            url: "{{ route('products.destroy') }}",
                             data: { submit: true },
                             dataType: "json",
                         });
@@ -660,7 +648,7 @@
                 loading("#confirm-room-deactivate");
                 $.ajax({
                     type: "DELETE",
-                    url: "{{ route('room_management') }}" + "/archive/" + id,
+                    url: "{{ route('inventory') }}" + "/archive/" + id,
                     data: { submit: true },
                     dataType: "json",
                     cache: false,
@@ -697,7 +685,7 @@
                 loading("#confirm-room-delete");
                 $.ajax({
                     type: "DELETE",
-                    url: "{{ route('room_management') }}" + "/destroy/" + id,
+                    url: "{{ route('inventory') }}" + "/destroy/" + id,
                     data: { submit: true },
                     dataType: "json",
                     cache: false,
@@ -734,7 +722,7 @@
                 loading("#confirm-room-restore");
                 $.ajax({
                     type: "PATCH",
-                    url: "{{ route('room_management') }}" + "/restore/" + id,
+                    url: "{{ route('inventory') }}" + "/restore/" + id,
                     data: { submit: true },
                     dataType: "json",
                     cache: false,
@@ -766,7 +754,7 @@
             var id = $(this).data("id");
             $.ajax({
                 type: "POST",
-                url: "{{ route('room_management') }}" + '/edit/' + id,
+                url: "{{ route('inventory') }}" + '/edit/' + id,
                 data: { submit: true },
                 dataType: "json",
                 success: function (response) {
@@ -775,7 +763,7 @@
                         $('#edit-form').find('#edit-'+i).val(v);
                     });
 
-                    $("#edit-rate").val(response.parsed.rate);
+                    $("#edit-price").val(response.parsed.price);
                     $('#edit-thumbnail-preview').attr('src', response.parsed.location);
 
                     $("#edit-thumbnail-upload").off().change(function (e) {
@@ -785,7 +773,7 @@
                         let fd = new FormData(form);
                         $.ajax({
                             type: "POST",
-                            url: "{{ route('thumbnail.store') }}",
+                            url: "{{ route('products.store') }}",
                             data: fd,
                             dataType: "json",
                             cache: false,
@@ -795,13 +783,13 @@
                                 if(response.status == 1){
                                     $.ajax({
                                         type: "POST",
-                                        url: "{{ route('thumbnail.show') }}",
+                                        url: "{{ route('products.show') }}",
                                         data: { submit: true },
                                         dataType: "json",
                                         success: function (response) {
                                             showModal('#image-crop-modal');
                                             $("#picture-preview").attr("src", response.location);
-                                            finishedLoading("#edit-thumbnail-upload-trigger", "Upload Thumbnail");
+                                            finishedLoading("#edit-thumbnail-upload-trigger", "Upload Image");
                                             var $image = $('#picture-preview');
 
                                             $image.cropper({
@@ -871,7 +859,7 @@
 
                                                         $.ajax({
                                                             type: "POST",
-                                                            url: "{{ route('thumbnail.store') }}",
+                                                            url: "{{ route('products.store') }}",
                                                             data: fd,
                                                             dataType: "json",
                                                             cache: false,
@@ -899,7 +887,7 @@
                                                     $image.cropper("destroy");
                                                     $.ajax({
                                                         type: "POST",
-                                                        url: "{{ route('thumbnail.destroy') }}",
+                                                        url: "{{ route('products.destroy') }}",
                                                         data: { submit: true },
                                                         dataType: "json",
                                                         success: function (response) {
@@ -918,7 +906,7 @@
                                 if(xhr.status == 422){
                                     showModal("#error-modal");
                                     $("#edit-thumbnail-upload").val(null);
-                                    finishedLoading("#edit-thumbnail-upload-trigger", "Upload Thumbnail");
+                                    finishedLoading("#edit-thumbnail-upload-trigger", "Upload Image");
                                 }
                             }
                         });
@@ -936,7 +924,7 @@
 
                         $.ajax({
                             type: "POST",
-                            url: "{{ route('room_management') }}" + '/update/' + id,
+                            url: "{{ route('inventory') }}" + '/update/' + id,
                             data: editFormData,
                             dataType: "json",
                             cache: false,

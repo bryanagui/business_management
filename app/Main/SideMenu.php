@@ -50,7 +50,7 @@ class SideMenu
                 'title' => 'Room Management'
             ],
             'inventory' => [
-                'icon' => 'hard-drive',
+                'icon' => 'box',
                 'route_name' => 'inventory',
                 'title' => 'Inventory Management'
             ],

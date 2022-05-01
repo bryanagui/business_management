@@ -15,7 +15,7 @@ class ProductSeeder extends Seeder
     public function run()
     {
         Product::create([
-            'category' => 'Album',
+            'category' => 'K-Pop Albums',
             'name' => 'Formula of Love O+T=<3',
             'price' => 250000,
             'stock' => 100,
