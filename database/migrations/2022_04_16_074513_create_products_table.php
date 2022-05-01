@@ -18,6 +18,9 @@ class CreateProductsTable extends Migration
             $table->string('category');
             $table->string('name');
             $table->integer('price');
+            $table->integer('stock');
+            $table->string('media')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

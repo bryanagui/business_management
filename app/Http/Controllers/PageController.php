@@ -47,6 +47,17 @@ class PageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function inventory()
+    {
+        return view('pages/inventory');
+    }
+
+    /**
+     * Show specified view.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function rooms()
     {
         return view('pages/room-list');

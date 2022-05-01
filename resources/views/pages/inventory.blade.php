@@ -1,7 +1,7 @@
 @extends('../layout/' . $layout)
 
 @section('subhead')
-<title>Reserv8tion - Room Management</title>
+<title>Reserv8tion - Inventory Management</title>
 <link href="http://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('dist/css/square-cropper.css') }}" />
 <link rel="stylesheet" href="{{ asset('dist/css/form-range.css') }}" />
@@ -11,23 +11,22 @@
 @section('subcontent')
 <div class="grid grid-cols-12 gap-6 mt-8">
     <div class="col-span-12">
-        <h2 class="intro-y text-lg font-medium mr-auto mt-2">Room Management</h2>
+        <h2 class="intro-y text-lg font-medium mr-auto mt-2">Inventory Management</h2>
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-6">
-            <button class="btn btn-primary shadow-md mr-2" data-tw-toggle="modal" data-tw-target="#create-new-room-modal">Add New Room</button>
+            <button class="btn btn-primary shadow-md mr-2" data-tw-toggle="modal" data-tw-target="#create-new-room-modal">Add New Product</button>
         </div>
         <!-- BEGIN: Room List -->
         <div class="col-span-12 mt-6">
             <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0">
-                <table class="table table-report sm:mt-2" id="rooms-table">
+                <table class="table table-report sm:mt-2" id="products-table">
                     <thead>
                         <tr>
                             <th class="whitespace-nowrap">ID</th>
                             <th class="whitespace-nowrap">IMAGE</th>
-                            <th class="whitespace-nowrap">ROOM</th>
-                            <th class="whitespace-nowrap">FLOOR</th>
-                            <th class="whitespace-nowrap">TYPE</th>
-                            <th class="whitespace-nowrap">DESCRIPTION</th>
-                            <th class="text-center whitespace-nowrap">RATE</th>
+                            <th class="whitespace-nowrap">PRODUCT NAME</th>
+                            <th class="whitespace-nowrap">CATEGORY</th>
+                            <th class="whitespace-nowrap">UNIT PRICE</th>
+                            <th class="whitespace-nowrap">STOCK</th>
                             <th class="text-center whitespace-nowrap">STATUS</th>
                             <th class="text-center whitespace-nowrap">ACTIONS</th>
                         </tr>
@@ -315,7 +314,7 @@
             }
         });
 
-        var table = $("#rooms-table").DataTable({
+        var table = $("#products-table").DataTable({
             processing: true,
             ordering: false,
             serverSide: true,
@@ -325,24 +324,23 @@
             pageResize: false,
 
             ajax: {
-                url: "{{ route('datatables.rooms') }}",
+                url: "{{ route('datatables.products') }}",
             },
 
             columns: [
                 {data: "id", name: "id"},
                 {data: "photo", name: "photo"},
-                {data: "number", name: "number"},
-                {data: "floor", name: "floor"},
-                {data: "type", name: "type"},
-                {data: "description", name: "description"},
-                {data: "rate", name: "rate"},
+                {data: "name", name: "name"},
+                {data: "category", name: "category"},
+                {data: "price", name: "price"},
+                {data: "stock", name: "stock"},
                 {data: "status", name: "status"},
-                {data: "actions", name: "actions"},
+                {data: "actions", name: "actions"}
             ],
 
             columnDefs: [
                 {
-                    targets: [0, 4, 5, 6, 7],
+                    targets: [3, 4, 5, 6],
                     className: 'text-center',
                 },
                 {

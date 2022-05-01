@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'datatables'], function () {
         Route::get('/staff', [DataTablesController::class, 'staff'])->name('datatables.staff');
         Route::get('/rooms', [DataTablesController::class, 'rooms'])->name('datatables.rooms');
+        Route::get('/products', [DataTablesController::class, 'products'])->name('datatables.products');
     });
     // END: DataTables
 
@@ -88,6 +89,12 @@ Route::middleware('auth')->group(function () {
             Route::patch('restore/{id}', [RoomManagementController::class, 'restore'])->name('room_management.restore'); // DELETE (Restore)
         });
         // END: Room Management Resource Requests
+
+        // BEGIN: Staff Resource Requests
+        Route::group(['prefix' => 'inventory'], function () {
+            Route::get('/', [PageController::class, 'inventory'])->name('inventory');
+        });
+        // END: Staff Resource Requests
 
         // BEGIN: Change Thumbnail Resource Requests
         Route::group(['prefix' => 'thumbnail'], function () {

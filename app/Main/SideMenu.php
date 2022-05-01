@@ -49,6 +49,11 @@ class SideMenu
                 'route_name' => 'room_management',
                 'title' => 'Room Management'
             ],
+            'inventory' => [
+                'icon' => 'hard-drive',
+                'route_name' => 'inventory',
+                'title' => 'Inventory Management'
+            ],
         ];
     }
 }

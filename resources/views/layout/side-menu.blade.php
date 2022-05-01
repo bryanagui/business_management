@@ -18,7 +18,7 @@
         <div class="side-nav__devider my-6"></div>
         <ul>
             @foreach ($side_menu as $menuKey => $menu)
-            @if($menu['title'] == 'Staff' || $menu['title'] == 'Room Management')
+            @if($menu['title'] == 'Staff' || $menu['title'] == 'Room Management' || $menu['title'] == "Inventory Management")
             @role('Administrator|Twice')
             {!! $menu['title'] == 'Staff' ? '<div class="side-nav__devider my-6"></div>' : null !!}
             <li>

@@ -54,7 +54,7 @@
             <ul class="dropdown-content bg-primary text-white">
                 <li class="p-2">
                     <div class="font-medium">{{ Auth::user()->name }}</div>
-                    <div class="text-xs text-white/70 mt-0.5 dark:text-slate-500">Placeholder</div>
+                    <div class="text-xs text-white/70 mt-0.5 dark:text-slate-500">{{ Auth::user()->getRoleNames()[0] }}</div>
                 </li>
                 <li>
                     <hr class="dropdown-divider border-white/[0.08]">

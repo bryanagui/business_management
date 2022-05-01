@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'Minatozaki Sana',
-            'email' => 'sana.twice@jyp.com',
+            'email' => 'sana.twice@jype.com',
             'email_verified_at' => now(),
             'password' => Hash::make('iloveusana'),
             'gender' => 'female',
@@ -50,7 +50,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'Hirai Momo',
-            'email' => 'momo.twice@jyp.com',
+            'email' => 'momo.twice@jype.com',
             'email_verified_at' => now(),
             'password' => Hash::make('iloveumomo'),
             'gender' => 'female',
@@ -65,7 +65,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'Myoui Mina',
-            'email' => 'mina.twice@jyp.com',
+            'email' => 'mina.twice@jype.com',
             'email_verified_at' => now(),
             'password' => Hash::make('iloveumina'),
             'gender' => 'female',
@@ -80,7 +80,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'Kim Dahyun',
-            'email' => 'dahyun.twice@jyp.com',
+            'email' => 'dahyun.twice@jype.com',
             'email_verified_at' => now(),
             'password' => Hash::make('iloveudahyun'),
             'gender' => 'female',
