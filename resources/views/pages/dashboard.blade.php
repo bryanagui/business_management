@@ -48,7 +48,7 @@
             <!-- BEGIN: Today's Report -->
             <div class="col-span-12 mt-8">
                 <div class="intro-y flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">Daily Report</h2>
+                    <h2 class="text-lg font-medium truncate mr-5">My Daily Report</h2>
                 </div>
                 <div class="grid grid-cols-12 gap-6 mt-5">
                     <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
@@ -100,7 +100,7 @@
                                     <i data-feather="heart" class="report-box__icon text-success"></i>
                                 </div>
                                 <div class="text-3xl font-medium leading-8 mt-6">
-                                    <span>0 / 100</span>
+                                    <span>0 / {{ \App\Models\Room::count() }}</span>
                                 </div>
                                 <div class="text-base text-slate-500 mt-1">Rooms</div>
                             </div>
@@ -112,7 +112,7 @@
             <!-- BEGIN: Weekly Report -->
             <div class="col-span-12 mt-8">
                 <div class="intro-y flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">Weekly Report</h2>
+                    <h2 class="text-lg font-medium truncate mr-5">Total Daily Report</h2>
                 </div>
                 <div class="grid grid-cols-12 gap-6 mt-5">
                     <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
@@ -164,7 +164,7 @@
                                     <i data-feather="heart" class="report-box__icon text-success"></i>
                                 </div>
                                 <div class="text-3xl font-medium leading-8 mt-6">
-                                    <span>0 / 100</span>
+                                    <span>0 / {{ \App\Models\Room::count() }}</span>
                                 </div>
                                 <div class="text-base text-slate-500 mt-1">Rooms</div>
                             </div>

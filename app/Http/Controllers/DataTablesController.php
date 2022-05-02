@@ -152,7 +152,7 @@ class DataTablesController extends Controller
                             break;
                     }
 
-                    return "<div class='flex justify-center'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-lg' src='" . $source . "'></div></div>";
+                    return "<div class='flex justify-center'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-md' src='" . $source . "' data-action='zoom'></div></div>";
                 })
                 ->addColumn('price', function ($row) {
                     return '₱' . number_format($row->price / 100, 2);

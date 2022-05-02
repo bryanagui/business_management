@@ -7,18 +7,8 @@
 @section('subcontent')
 <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
     <h2 class="text-lg font-medium mr-auto">Point of Sale</h2>
-    <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
-        <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#new-order-modal" class="btn btn-primary shadow-md mr-2">New Order</a>
-        <div class="pos-dropdown dropdown ml-auto sm:ml-0">
-            <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
-                <span class="w-5 h-5 flex items-center justify-center">
-                    <i class="w-4 h-4" data-feather="chevron-down"></i>
-                </span>
-            </button>
-        </div>
-    </div>
 </div>
-<div class="intro-y grid grid-cols-12 gap-5 mt-5">
+<div class="intro-y grid grid-cols-12 gap-5 mt-5 item-list hidden">
     <!-- BEGIN: Item List -->
     <div class="intro-y col-span-12 lg:col-span-8">
         <div class="lg:flex intro-y">
@@ -35,9 +25,9 @@
             </div>
             @endforeach
         </div>
-        <div class="grid grid-cols-12 gap-5 mt-5 pt-5 border-t">
+        <div class="grid grid-cols-12 gap-5 mt-5 pt-5 border-t products-list">
             @foreach(\App\Models\Product::all() as $product)
-            <a href="javascript:;" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">
+            <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#add-item-modal" id="product" data-id="{{ $product->id }}" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">
                 <div class="box rounded-md p-3 relative zoom-in">
                     <div class="flex-none relative block before:block before:w-full before:pt-[100%]">
                         <div class="absolute top-0 left-0 w-full h-full image-fit">
@@ -45,6 +35,7 @@
                         </div>
                     </div>
                     <div class="block font-medium text-center truncate mt-3">{{ $product->name }}</div>
+                    <div class="block text-center truncate">Price: ₱ {{ number_format($product->price / 100, 2) }}</div>
                 </div>
             </a>
             @endforeach
@@ -61,23 +52,18 @@
                             Ticket
                         </button>
                     </li>
-                    <li id="details-tab" class="nav-item flex-1" role="presentation">
-                        <button class="nav-link w-full py-2" data-tw-toggle="pill" data-tw-target="#details" type="button" role="tab" aria-controls="details" aria-selected="false">
-                            Details
-                        </button>
-                    </li>
                 </ul>
             </div>
         </div>
         <div class="tab-content">
             <div id="ticket" class="tab-pane active" role="tabpanel" aria-labelledby="ticket-tab">
                 <div class="box p-2 mt-5">
-                    @foreach (array_slice($fakers, 0, 5) as $key => $faker)
+                    @foreach (\App\Models\Cart::where('user_id', Auth::user()->id)->get() as $cart)
                     <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#add-item-modal" class="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md">
-                        <div class="max-w-[50%] truncate mr-1">{{ $faker['foods'][0]['name'] }}</div>
-                        <div class="text-slate-500">x 1</div>
+                        <div class="max-w-[50%] truncate mr-1">{{ $cart->name }}</div>
+                        <div class="text-slate-500">x {{ $cart->quantity }}</div>
                         <i data-feather="edit" class="w-4 h-4 text-slate-500 ml-2"></i>
-                        <div class="ml-auto font-medium">${{ $faker['totals'][0] }}</div>
+                        <div class="ml-auto font-medium">₱ {{ number_format($cart->amount / 100, 2) }}</div>
                     </a>
                     @endforeach
                 </div>
@@ -86,131 +72,177 @@
                     <button class="btn btn-primary ml-2">Apply</button>
                 </div>
                 <div class="box p-5 mt-5">
-                    <div class="flex">
-                        <div class="mr-auto">Subtotal</div>
-                        <div class="font-medium">$250</div>
-                    </div>
-                    <div class="flex mt-4">
+                    {{-- <div class="flex mt-4">
                         <div class="mr-auto">Discount</div>
                         <div class="font-medium text-danger">-$20</div>
-                    </div>
-                    <div class="flex mt-4">
-                        <div class="mr-auto">Tax</div>
-                        <div class="font-medium">15%</div>
-                    </div>
-                    <div class="flex mt-4 pt-4 border-t border-slate-200/60 dark:border-darkmode-400">
+                    </div> --}}
+                    <div class="flex">
                         <div class="mr-auto font-medium text-base">Total Charge</div>
-                        <div class="font-medium text-base">$220</div>
+                        <div class="font-medium text-base">₱ {{ number_format((\App\Models\Cart::where('user_id', Auth::user()->id)->sum('amount') / 100), 2) }}</div>
                     </div>
                 </div>
                 <div class="flex mt-5">
-                    <button class="btn w-32 border-slate-300 dark:border-darkmode-400 text-slate-500">Clear Items</button>
-                    <button class="btn btn-primary w-32 shadow-md ml-auto">Charge</button>
-                </div>
-            </div>
-            <div id="details" class="tab-pane" role="tabpanel" aria-labelledby="details-tab">
-                <div class="box p-5 mt-5">
-                    <div class="flex items-center border-b border-slate-200 dark:border-darkmode-400 pb-5">
-                        <div>
-                            <div class="text-slate-500">Time</div>
-                            <div class="mt-1">02/06/20 02:10 PM</div>
-                        </div>
-                        <i data-feather="clock" class="w-4 h-4 text-slate-500 ml-auto"></i>
-                    </div>
-                    <div class="flex items-center border-b border-slate-200 dark:border-darkmode-400 py-5">
-                        <div>
-                            <div class="text-slate-500">Customer</div>
-                            <div class="mt-1">{{ $fakers[0]['users'][0]['name'] }}</div>
-                        </div>
-                        <i data-feather="user" class="w-4 h-4 text-slate-500 ml-auto"></i>
-                    </div>
-                    <div class="flex items-center border-b border-slate-200 dark:border-darkmode-400 py-5">
-                        <div>
-                            <div class="text-slate-500">People</div>
-                            <div class="mt-1">3</div>
-                        </div>
-                        <i data-feather="users" class="w-4 h-4 text-slate-500 ml-auto"></i>
-                    </div>
-                    <div class="flex items-center pt-5">
-                        <div>
-                            <div class="text-slate-500">Table</div>
-                            <div class="mt-1">21</div>
-                        </div>
-                        <i data-feather="mic" class="w-4 h-4 text-slate-500 ml-auto"></i>
-                    </div>
+                    <button class="btn w-32 border-slate-300 dark:border-darkmode-400 text-slate-500" data-tw-toggle="modal" data-tw-target="#cart-clear-modal">Clear Items</button>
+                    <button class="btn btn-primary w-32 shadow-md ml-auto charge-btn" {{ \App\Models\Cart::where('user_id', Auth::user()->id)->get()->isEmpty() ? 'disabled' : '' }} data-tw-toggle="modal" data-tw-target="#cart-checkout-modal">Charge</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- END: Ticket -->
 </div>
-<!-- BEGIN: New Order Modal -->
-<div id="new-order-modal" class="modal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="font-medium text-base mr-auto">New Order</h2>
-            </div>
-            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-                <div class="col-span-12">
-                    <label for="pos-form-1" class="form-label">Name</label>
-                    <input id="pos-form-1" type="text" class="form-control flex-1" placeholder="Customer name">
-                </div>
-                <div class="col-span-12">
-                    <label for="pos-form-2" class="form-label">Table</label>
-                    <input id="pos-form-2" type="text" class="form-control flex-1" placeholder="Customer table">
-                </div>
-                <div class="col-span-12">
-                    <label for="pos-form-3" class="form-label">Number of People</label>
-                    <input id="pos-form-3" type="text" class="form-control flex-1" placeholder="People">
-                </div>
-            </div>
-            <div class="modal-footer text-right">
-                <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-32 mr-1">Cancel</button>
-                <button type="button" class="btn btn-primary w-32">Create Ticket</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- END: New Order Modal -->
+@endsection
+
+@section('modal')
 <!-- BEGIN: Add Item Modal -->
-<div id="add-item-modal" class="modal" tabindex="-1" aria-hidden="true">
+<div id="add-item-modal" class="modal" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="font-medium text-base mr-auto">{{ $fakers[0]['foods'][0]['name'] }}</h2>
+                <h2 class="font-medium text-base mr-auto truncate product-title"></h2>
             </div>
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                 <div class="col-span-12">
-                    <label for="pos-form-4" class="form-label">Quantity</label>
+                    <label for="quantity" class="form-label">Quantity</label>
                     <div class="flex mt-2 flex-1">
-                        <button type="button" class="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 mr-1">-</button>
-                        <input id="pos-form-4" type="text" class="form-control w-24 text-center" placeholder="Item quantity" value="2">
-                        <button type="button" class="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 ml-1">+</button>
+                        <button type="button" class="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 mr-1" id="qty-dec">-</button>
+                        <input id="quantity" type="text" class="form-control w-24 text-center" placeholder="Quantity" value="1">
+                        <button type="button" class="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 ml-1" id="qty-inc">+</button>
                     </div>
-                </div>
-                <div class="col-span-12">
-                    <label for="pos-form-5" class="form-label">Notes</label>
-                    <textarea id="pos-form-5" class="form-control w-full mt-2" placeholder="Item notes"></textarea>
+                    <span class="validation-error error-quantity {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                 </div>
             </div>
             <div class="modal-footer text-right">
-                <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button>
-                <button type="button" class="btn btn-primary w-24">Add Item</button>
+                <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1 cancel-item">Cancel</button>
+                <button type="button" class="btn btn-primary w-24" id="add-current-item">Add Item</button>
             </div>
         </div>
     </div>
 </div>
 <!-- END: Add Item Modal -->
+<!-- BEGIN: Clear Cart Modal -->
+<div id="cart-clear-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
+                    <div class="text-3xl mt-5">Are you sure?</div>
+                    <div class="text-slate-500 mt-2">Do you really want to clear item cart?</div>
+                </div>
+                <div class="px-5 pb-8 text-center"> <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <button type="button" id="confirm-cart-clear" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Yes</button> </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Clear Cart Modal -->
+<!-- BEGIN: Clear Cart Modal -->
+<div id="cart-checkout-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
+                    <div class="text-3xl mt-5">Proceed to Checkout?</div>
+                    <div class="text-slate-500 mt-2">Proceeding will submit the current items and will finish the transaction<br>Are you sure you want to continue??</div>
+                </div>
+                <div class="px-5 pb-8 text-center"> <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <a href="{{ route('pos.create') }}" type="button" id="confirm-cart-checkout" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Yes</a> </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Clear Cart Modal -->
 @endsection
 
 @section('script')
 <script>
     $(document).ready(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        function reloadTicket(){
+            $("#ticket").load(location.href + " #ticket");
+        }
+
+        function showModal(selector){
+            const el = document.querySelector(selector);
+            const modal = tailwind.Modal.getOrCreateInstance(el);
+            modal.show();
+        }
+
+        function hideModal(selector){
+            const el = document.querySelector(selector);
+            const modal = tailwind.Modal.getOrCreateInstance(el);
+            modal.hide();
+        }
+
+        $(".cancel-item").click(function (e) {
+            $("#quantity").val(1);
+            $('span.validation-error').text('');
+        });
+
+        $("div.item-list").removeClass("hidden");
+
         $(".product-search").on("keyup", function () {
             let val = $(this).val().toLowerCase();
             $(".product").filter(function(){
                 $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1);
+            });
+        });
+
+        $("#qty-inc").click(function (e) { $('#quantity').get(0).value++; });
+        $("#qty-dec").click(function (e) { $('#quantity').get(0).value--; });
+
+        $("#confirm-cart-clear").click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "DELETE",
+                url: "{{ route('pos.destroy') }}",
+                data: { submit: true },
+                dataType: "json",
+                success: function (response) {
+                    hideModal("#cart-clear-modal");
+                    reloadTicket();
+                }
+            });
+        });
+
+        $("div.products-list #product").off().click(function (e) {
+            e.preventDefault();
+            let id = $(this).data("id");
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('pos') }}" + '/show/' + id,
+                data: { submit: true },
+                dataType: "json",
+                success: function (response) {
+                    // $(".charge-btn").removeAttr("disabled");
+                    $(".product-title").text(response.data.name);
+                    $("#add-current-item").off().click(function (e) {
+                        let qty = $("#quantity").val();
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('pos.store') }}",
+                            data: { id: id, quantity: qty },
+                            dataType: "json",
+                            success: function (response) {
+                                hideModal("#add-item-modal");
+                                $("#quantity").val(1);
+                                reloadTicket();
+                            },
+                            error: function (xhr) {
+                                if(xhr.status == 422){
+                                    var errors = xhr.responseJSON.errors;
+                                    $('span.validation-error').text('');
+                                    $.each(errors, function (s, v) {
+                                        $('span.error-'+s).text(v[0]);
+                                    });
+                                }
+                            }
+                        });
+                    });
+                }
             });
         });
     });

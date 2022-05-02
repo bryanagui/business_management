@@ -68,24 +68,24 @@
                     <div class="mb-4">
                         <label for="create-full-name" class="form-label">Full Name</label>
                         <input id="create-full-name" type="text" class="form-control" name="name" placeholder="Juan S. Dela Cruz">
-                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4"> <label>Gender</label>
                         <div class="flex flex-col sm:flex-row mt-2">
                             <div class="form-check mr-2"> <input id="create-gender-male" class="form-check-input" type="radio" name="gender" value="male"> <label class="form-check-label" for="radio-switch-4">Male</label> </div>
                             <div class="form-check mr-2 mt-2 sm:mt-0"> <input id="create-gender-female" class="form-check-input" type="radio" name="gender" value="female"> <label class="form-check-label" for="radio-switch-5">Female</label> </div>
                         </div>
-                        <span class="validation-error error-gender {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-gender {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-address" class="form-label">Address</label>
                         <input id="create-address" type="text" class="form-control" name="address" placeholder="Seoul, South Korea">
-                        <span class="validation-error error-address {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-address {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-email" class="form-label">Email</label>
                         <input id="create-email" type="email" class="form-control" name="email" placeholder="juandelacruz@example.com">
-                        <span class="validation-error error-email {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-email {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-confirm-email" class="form-label">Confirm Email</label>
@@ -94,7 +94,7 @@
                     <div class="mb-4">
                         <label for="create-password" class="form-label">Password</label>
                         <input id="create-password" type="password" class="form-control" name="password" placeholder="Password">
-                        <span class="validation-error error-password {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-password {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-confirm-password" class="form-label">Confirm Password</label>
@@ -103,12 +103,12 @@
                     <div class="mb-4">
                         <label for="create-date" class="form-label">Date of Birth</label>
                         <input id="create-date" type="text" readonly="readonly" name="birthdate" class="datepicker form-control block mx-auto" data-single-mode="true">
-                        <span class="validation-error error-birthdate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-birthdate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-contact" class="form-label">Contact Number</label>
                         <input id="create-contact" type="text" class="form-control" name="contact" placeholder="0912 345 6789">
-                        <span class="validation-error error-contact {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-contact {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <button type="submit" id="create-form-submit" class="btn btn-primary w-full mr-1 mb-2 mt-4">Submit</button>
                 </form>
@@ -135,39 +135,39 @@
                             <option value="{{ $role->name }}">{{ $role->name }}</option>
                             @endforeach
                         </select>
-                        <span class="validation-error error-role {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-role {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-name" class="form-label">Full Name</label>
                         <input id="edit-name" type="text" class="form-control" name="name" placeholder="Juan S. Dela Cruz">
-                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4"> <label>Gender</label>
                         <div class="flex flex-col sm:flex-row mt-2">
                             <div class="form-check mr-2"> <input id="edit-gender-male" class="form-check-input" type="radio" name="gender" value="male"> <label class="form-check-label" for="radio-switch-4">Male</label> </div>
                             <div class="form-check mr-2 mt-2 sm:mt-0"> <input id="edit-gender-female" class="form-check-input" type="radio" name="gender" value="female"> <label class="form-check-label" for="radio-switch-5">Female</label> </div>
                         </div>
-                        <span class="validation-error error-gender {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-gender {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-address" class="form-label">Address</label>
                         <input id="edit-address" type="text" class="form-control" name="address" placeholder="Seoul, South Korea">
-                        <span class="validation-error error-address {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-address {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-email" class="form-label">Email</label>
                         <input id="edit-email" type="email" class="form-control" name="email" placeholder="juandelacruz@example.com">
-                        <span class="validation-error error-email {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-email {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-date" class="form-label">Date of Birth</label>
                         <input id="edit-date" type="text" readonly="readonly" name="birthdate" class="datepicker form-control block mx-auto" data-single-mode="true">
-                        <span class="validation-error error-birthdate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-birthdate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-contact" class="form-label">Contact Number</label>
                         <input id="edit-contact" type="text" class="form-control" name="contact" placeholder="0912 345 6789">
-                        <span class="validation-error error-contact {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-contact {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <button type="submit" id="edit-form-submit" class="btn btn-primary w-full mr-1 mb-2 mt-4">Submit</button>
                 </form>

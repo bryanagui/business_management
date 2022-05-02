@@ -19,6 +19,7 @@ class ProductSeeder extends Seeder
             'name' => 'Formula of Love O+T=<3',
             'price' => 250000,
             'stock' => 100,
+            'media' => 'bHF9qNQLKB4LHv2EXIsv5q4B8wgXOt.jpg'
         ]);
     }
 }

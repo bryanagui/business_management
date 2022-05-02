@@ -124,13 +124,13 @@
                                 <img src="{{ asset('/storage/static/images/nothumb.jpg') }}" id="thumbnail-preview" class="rounded-lg">
                             </div>
                             <button type="button" id="thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Thumbnail</button>
-                            <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                            <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label for="create-number" class="form-label">Room Number</label>
                         <input id="create-number" type="number" class="form-control" name="number" placeholder="1000">
-                        <span class="validation-error error-number {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-number {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4"> <label>Room Type</label>
                         <select id="edit-type" class="form-select" name="type">
@@ -138,23 +138,23 @@
                             <option value="{{ $room->type }}">{{ $room->type }}</option>
                             @endforeach
                         </select>
-                        <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4"> <label>Floor</label>
                         <select id="edit-floor" class="form-select" name="floor">
                             @for($i = 1; $i <= 30; $i++) <option value="{{ $i }}">Floor {{ $i }}</option> @endfor
                         </select>
-                        <span class="validation-error error-floor {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-floor {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-rate" class="form-label">Price/Rate</label>
                         <input id="create-rate" type="number" class="form-control" name="rate" step="0.01" placeholder="7500.00">
-                        <span class="validation-error error-rate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-rate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-description" class="form-label">Description</label>
                         <textarea id="create-description" type="text" class="form-control" name="description" placeholder="A standard one person room"></textarea>
-                        <span class="validation-error error-description {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-description {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <button type="submit" id="create-form-submit" class="btn btn-primary w-full mr-1 mb-2">Submit</button>
                 </form>
@@ -184,13 +184,13 @@
                                 <img src="{{ asset('/storage/static/images/nothumb.jpg') }}" id="edit-thumbnail-preview" class="rounded-lg">
                             </div>
                             <button type="button" id="edit-thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Thumbnail</button>
-                            <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                            <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label for="edit-number" class="form-label">Room Number</label>
                         <input id="edit-number" type="number" class="form-control" name="number" placeholder="1000">
-                        <span class="validation-error error-number {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-number {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4"> <label>Room Type</label>
                         <select id="edit-type" class="form-select" name="type">
@@ -198,23 +198,23 @@
                             <option value="{{ $room->type }}">{{ $room->type }}</option>
                             @endforeach
                         </select>
-                        <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4"> <label>Floor</label>
                         <select id="edit-floor" class="form-select" name="floor">
                             @for($i = 1; $i <= 30; $i++) <option value="{{ $i }}">Floor {{ $i }}</option> @endfor
                         </select>
-                        <span class="validation-error error-floor {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-floor {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-rate" class="form-label">Price/Rate</label>
                         <input id="edit-rate" type="number" class="form-control" name="rate" step="0.01" placeholder="7500.00">
-                        <span class="validation-error error-rate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-rate {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-description" class="form-label">Description</label>
                         <textarea id="edit-description" type="text" class="form-control" name="description" placeholder="A standard one person room"></textarea>
-                        <span class="validation-error error-description {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-description {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <button type="submit" id="edit-form-submit" class="btn btn-primary w-full mr-1 mb-2">Submit</button>
                 </form>

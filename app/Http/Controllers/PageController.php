@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class PageController extends Controller
 {
@@ -77,6 +80,11 @@ class PageController extends Controller
     public function pointOfSale()
     {
         return view('pages/point-of-sale');
+    }
+
+    public function invoice()
+    {
+        return !Session::has('message') ? abort(404) :  view('pages/invoice');
     }
 
     /**

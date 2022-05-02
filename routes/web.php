@@ -10,6 +10,7 @@ use App\Http\Controllers\Functions\ChangePictureController;
 use App\Http\Controllers\Functions\ChangeProductImageController;
 use App\Http\Controllers\Functions\ChangeThumbnailController;
 use App\Http\Controllers\Functions\InventoryController;
+use App\Http\Controllers\Functions\PointOfSaleController;
 use App\Http\Controllers\Functions\StaffController;
 use App\Http\Controllers\Functions\RoomManagementController;
 
@@ -57,11 +58,26 @@ Route::middleware('auth')->group(function () {
     Route::get('reservations', [PageController::class, 'reservations'])->name('reservations');
     Route::get('rooms', [PageController::class, 'rooms'])->name('rooms');
     Route::get('guests', [PageController::class, 'guests'])->name('guests');
-    Route::get('point-of-sale', [PageController::class, 'pointOfSale'])->name('pos');
-
-
+    Route::get('invoice', [PageController::class, 'invoice'])->name('invoice');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
     // END: GET Requests
+
+    // --------------------------------------------------------------------------------------------- //
+
+    Route::group(['prefix' => 'point-of-sale'], function () {
+        Route::get('/', [PageController::class, 'pointOfSale'])->name('pos');
+        // BEGIN: POS Resource Requests
+        Route::post('store', [PointOfSaleController::class, 'store'])->name('pos.store'); // CREATE
+        Route::post('edit/{id}', [PointOfSaleController::class, 'edit'])->name('pos.edit'); // READ
+        Route::post('show/{id}', [PointOfSaleController::class, 'show'])->name('pos.show'); // READ
+        Route::patch('update/{id}', [PointOfSaleController::class, 'update'])->name('pos.update'); // UPDATE
+        Route::delete('destroy', [PointOfSaleController::class, 'destroy'])->name('pos.destroy'); // DELETE
+        Route::patch('restore/{id}', [PointOfSaleController::class, 'restore'])->name('pos.restore'); // DELETE (Restore)
+        Route::get('create', [PointOfSaleController::class, 'create'])->name('pos.create');
+
+        // END: POS Resource Requests
+    });
+
 
     Route::middleware('role:Administrator|Twice|Hotel Owner|Manager|Executive')->group(function () {
         // Route: Staff //
@@ -92,6 +108,8 @@ Route::middleware('auth')->group(function () {
         });
         // END: Room Management Resource Requests
 
+        // --------------------------------------------------------------------------------------------- //
+
         // BEGIN: Inventory Resource Requests
         Route::group(['prefix' => 'inventory'], function () {
             Route::get('/', [PageController::class, 'inventory'])->name('inventory');
@@ -103,6 +121,8 @@ Route::middleware('auth')->group(function () {
             Route::patch('restore/{id}', [InventoryController::class, 'restore'])->name('inventory.restore'); // DELETE (Restore)
         });
         // END: Inventory Resource Requests
+
+        // --------------------------------------------------------------------------------------------- //
 
         // BEGIN: Change Thumbnail Resource Requests
         Route::group(['prefix' => 'thumbnail'], function () {

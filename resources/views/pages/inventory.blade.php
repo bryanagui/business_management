@@ -123,7 +123,7 @@
                                 <img src="{{ asset('/storage/static/images/nothumb.jpg') }}" id="thumbnail-preview" class="rounded-lg">
                             </div>
                             <button type="button" id="thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Image</button>
-                            <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                            <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                         </div>
                     </div>
                     <div class="mb-4"> <label>Category</label>
@@ -132,22 +132,22 @@
                             <option value="{{ $category->name }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
-                        <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-name" class="form-label">Product Name</label>
                         <input id="create-name" type="text" class="form-control" name="name" placeholder="Yes, I am Sana 1st Photobook">
-                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-price" class="form-label">Product Price</label>
                         <input id="create-price" type="number" class="form-control" name="price" step="0.01" placeholder="2500.00">
-                        <span class="validation-error error-price {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-price {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="create-stock" class="form-label">Stock</label>
                         <input id="create-stock" type="number" class="form-control" name="stock" placeholder="1000">
-                        <span class="validation-error error-stock {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-stock {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <button type="submit" id="create-form-submit" class="btn btn-primary w-full mr-1 mb-2">Submit</button>
                 </form>
@@ -177,7 +177,7 @@
                                 <img src="{{ asset('/storage/static/images/nothumb.jpg') }}" id="edit-thumbnail-preview" class="rounded-lg">
                             </div>
                             <button type="button" id="edit-thumbnail-upload-trigger" class="btn btn-primary w-full mt-2">Upload Image</button>
-                            <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                            <span class="validation-error error-media {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                         </div>
                     </div>
                     <div class="mb-4"> <label>Category</label>
@@ -186,22 +186,22 @@
                             <option value="{{ $category->name }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
-                        <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-type {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-name" class="form-label">Product Name</label>
                         <input id="edit-name" type="text" class="form-control" name="name" placeholder="Yes, I am Sana 1st Photobook">
-                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-price" class="form-label">Product Price</label>
                         <input id="edit-price" type="number" class="form-control" name="price" step="0.01" placeholder="2500.00">
-                        <span class="validation-error error-price {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-price {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <div class="mb-4">
                         <label for="edit-stock" class="form-label">Stock</label>
                         <input id="edit-stock" type="number" class="form-control" name="stock" placeholder="1000">
-                        <span class="validation-error error-stock {{ $dark_mode ? 'text-warning' : 'text-danger' }} "><span>
+                        <span class="validation-error error-stock {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <button type="submit" id="edit-form-submit" class="btn btn-primary w-full mr-1 mb-2">Submit</button>
                 </form>
