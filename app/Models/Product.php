@@ -22,4 +22,14 @@ class Product extends Model
     {
         return $this->hasOne(Cart::class, 'product_id', 'id');
     }
+
+    /**
+     * Get the category associated with the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function category(): HasOne
+    {
+        return $this->hasOne(ProductCategory::class, 'name', 'category');
+    }
 }

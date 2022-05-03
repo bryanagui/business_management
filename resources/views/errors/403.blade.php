@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8">
     <link href="dist/images/logo.svg" rel="shortcut icon">
-    <title>Error 403</title>
+    <title>Error 403: Forbidden</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="dist/css/app.css" />
 </head>
 

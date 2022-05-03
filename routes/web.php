@@ -13,6 +13,7 @@ use App\Http\Controllers\Functions\InventoryController;
 use App\Http\Controllers\Functions\PointOfSaleController;
 use App\Http\Controllers\Functions\StaffController;
 use App\Http\Controllers\Functions\RoomManagementController;
+use App\Http\Controllers\Functions\SwitchCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,7 +75,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('destroy', [PointOfSaleController::class, 'destroy'])->name('pos.destroy'); // DELETE
         Route::patch('restore/{id}', [PointOfSaleController::class, 'restore'])->name('pos.restore'); // DELETE (Restore)
         Route::get('create', [PointOfSaleController::class, 'create'])->name('pos.create');
-
+        Route::post('switch', [SwitchCategoryController::class, 'switch'])->name('pos.switch');
         // END: POS Resource Requests
     });
 

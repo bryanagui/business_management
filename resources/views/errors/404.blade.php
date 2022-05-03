@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8">
     <link href="{{ asset('dist/images/logo.svg') }}" rel="shortcut icon">
-    <title>Error 404</title>
+    <title>Error 404: Not Found</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('dist/css/app.css') }}" />
 </head>
 

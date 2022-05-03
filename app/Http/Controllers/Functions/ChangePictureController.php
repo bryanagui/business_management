@@ -104,6 +104,7 @@ class ChangePictureController extends Controller
                     Storage::delete(['/public/static/uploaded/' . $image->media]);
                 }
             }
+
             ImageUpload::where('user_id', Auth::user()->id)->delete();
 
             return response()->json([

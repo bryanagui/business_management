@@ -19,15 +19,15 @@
         </div>
         <div class="grid grid-cols-12 gap-5 mt-5">
             @foreach(\App\Models\ProductCategory::all() as $category)
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in category-selection" id="{{ $category->name }}" data-name="{{ $category->name }}">
+            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
                 <div class="font-medium text-base">{{ $category->name }}</div>
                 <div class="text-slate-500">{{ \App\Models\Product::with(['category'])->where('category', $category->name)->count() }} items</div>
             </div>
             @endforeach
         </div>
         <div class="grid grid-cols-12 gap-5 mt-5 pt-5 border-t products-list">
-            @foreach(\App\Models\Product::where('category', \App\Models\ProductCategory::pluck('name')->first())->get() as $product)
-            <a href="javascript:;" id="product" data-id="{{ $product->id }}" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">
+            @foreach(\App\Models\Product::all() as $product)
+            <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#add-item-modal" id="product" data-id="{{ $product->id }}" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">
                 <div class="box rounded-md p-3 relative zoom-in">
                     <div class="flex-none relative block before:block before:w-full before:pt-[100%]">
                         <div class="absolute top-0 left-0 w-full h-full image-fit">
@@ -108,7 +108,6 @@
                         <input id="quantity" type="text" class="form-control w-24 text-center" placeholder="Quantity" value="1">
                         <button type="button" class="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 ml-1" id="qty-inc">+</button>
                     </div>
-                    <span class="validation-error error-id {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     <span class="validation-error error-quantity {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                 </div>
             </div>
@@ -142,7 +141,7 @@
             <div class="modal-body p-0">
                 <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
                     <div class="text-3xl mt-5">Proceed to Checkout?</div>
-                    <div class="text-slate-500 mt-2">Proceeding will submit the transaction.<br>Are you sure you want to continue?</div>
+                    <div class="text-slate-500 mt-2">Proceeding will submit the current items and will finish the transaction<br>Are you sure you want to continue??</div>
                 </div>
                 <div class="px-5 pb-8 text-center"> <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <a href="{{ route('pos.create') }}" type="button" id="confirm-cart-checkout" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Yes</a> </div>
             </div>
@@ -177,56 +176,9 @@
             modal.hide();
         }
 
-        function resetModalContent(){
+        $(".cancel-item").click(function (e) {
             $("#quantity").val(1);
             $('span.validation-error').text('');
-        }
-
-        function getProductInfo(){
-            $("div.products-list #product").on("click", function () {
-                showModal("#add-item-modal");
-                let id = $(this).attr("data-id");
-                console.log(id);
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('pos') }}" + '/show/' + id,
-                    data: { submit: true },
-                    dataType: "json",
-                    success: function (response) {
-                        // $(".charge-btn").removeAttr("disabled");
-                        $(".product-title").text(response.data.name);
-                        $("#add-current-item").off().click(function (e) {
-                            let qty = $("#quantity").val();
-                            $.ajax({
-                                type: "POST",
-                                url: "{{ route('pos.store') }}",
-                                data: { id: id, quantity: qty },
-                                dataType: "json",
-                                success: function (response) {
-                                    hideModal("#add-item-modal");
-                                    resetModalContent();
-                                    reloadTicket();
-                                },
-                                error: function (xhr) {
-                                    if(xhr.status == 422){
-                                        var errors = xhr.responseJSON.errors;
-                                        $('span.validation-error').text('');
-                                        $.each(errors, function (s, v) {
-                                            $('span.error-'+s).text(v[0]);
-                                        });
-                                    }
-                                }
-                            });
-                        });
-                    }
-                });
-            });
-        }
-
-        getProductInfo();
-
-        $(".cancel-item").click(function (e) {
-            resetModalContent();
         });
 
         $("div.item-list").removeClass("hidden");
@@ -241,26 +193,6 @@
         $("#qty-inc").click(function (e) { $('#quantity').get(0).value++; });
         $("#qty-dec").click(function (e) { $('#quantity').get(0).value--; });
 
-        $("div.category-selection").click(function (e) {
-            const name = $(this).data("name");
-            $.ajax({
-                type: "POST",
-                url: "{{ route('pos.switch') }}",
-                data: { name: name },
-                dataType: "json",
-                success: function (response) {
-                    $("div.products-list").text('');
-                    if(!response.length == 0){
-                        $.each(response, function (i, v) {
-                            const image = v.media == null ? "{{ asset('storage/static/images') . '/nothumb.jpg'  }}" : "{{ asset('storage/static/product_images') }}/" + v.media
-                            $("div.products-list").append('<a href="javascript:;" id="product" data-id="' + v.id + '" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">\n<div class="box rounded-md p-3 relative zoom-in">\n<div class="flex-none relative block before:block before:w-full before:pt-[100%]">\n<div class="absolute top-0 left-0 w-full h-full image-fit">\n<img alt="Product Thumbnail" class="rounded-md" src="' + image + '">\n</div>\n</div>\n<div class="block font-medium text-center truncate mt-3">'+ v.name +'</div>\n<div class="block text-center truncate">Price: ₱ '+ (v.price / 100).toFixed(2) +'</div>\n</div>\n</a>');
-                        });
-                        getProductInfo();
-                    }
-                }
-            });
-        });
-
         $("#confirm-cart-clear").click(function (e) {
             e.preventDefault();
             $.ajax({
@@ -270,8 +202,46 @@
                 dataType: "json",
                 success: function (response) {
                     hideModal("#cart-clear-modal");
-                    resetModalContent();
                     reloadTicket();
+                }
+            });
+        });
+
+        $("div.products-list #product").off().click(function (e) {
+            e.preventDefault();
+            let id = $(this).data("id");
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('pos') }}" + '/show/' + id,
+                data: { submit: true },
+                dataType: "json",
+                success: function (response) {
+                    // $(".charge-btn").removeAttr("disabled");
+                    $(".product-title").text(response.data.name);
+                    $("#add-current-item").off().click(function (e) {
+                        let qty = $("#quantity").val();
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('pos.store') }}",
+                            data: { id: id, quantity: qty },
+                            dataType: "json",
+                            success: function (response) {
+                                hideModal("#add-item-modal");
+                                $("#quantity").val(1);
+                                reloadTicket();
+                            },
+                            error: function (xhr) {
+                                if(xhr.status == 422){
+                                    var errors = xhr.responseJSON.errors;
+                                    $('span.validation-error').text('');
+                                    $.each(errors, function (s, v) {
+                                        $('span.error-'+s).text(v[0]);
+                                    });
+                                }
+                            }
+                        });
+                    });
                 }
             });
         });
