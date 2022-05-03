@@ -67,13 +67,6 @@
                     @endforeach
                 </div>
                 <div class="box p-5 mt-5">
-                    <h4 class="font-medium mb-2">Discount Coupon:</h4>
-                    <div class="flex">
-                        <input type="text" class="form-control py-3 px-4 w-full bg-slate-100 border-slate-200/60 pr-10" placeholder="Use coupon code...">
-                        <button class="btn btn-primary ml-2" {{ \App\Models\Cart::where('user_id', Auth::user()->id)->get()->isEmpty() ? 'disabled' : '' }}>Apply</button>
-                    </div>
-                </div>
-                <div class="box p-5 mt-5">
                     <h4 class="font-medium mb-2">Amount:</h4>
                     <div class="flex payment-input-card">
                         <input type="number" name="payment" id="payment" class="form-control py-3 px-4 w-full bg-slate-100 border-slate-200/60 pr-10" placeholder="Amount">
