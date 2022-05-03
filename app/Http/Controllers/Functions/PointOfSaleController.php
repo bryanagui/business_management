@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Functions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PosPaymentRequest;
 use App\Http\Requests\StorePosRequest;
+use App\Http\Requests\UpdatePosCartRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class PointOfSaleController extends Controller
      */
     public function create()
     {
-        if (Cart::where('user_id', Auth::user()->id)->get()->isEmpty()) {
+        if (Cart::where('user_id', Auth::user()->id)->get()->isEmpty() || \App\Models\Cart::where('user_id', Auth::user()->id)->sum('amount') > \App\Models\Cart::where('user_id', Auth::user()->id)->pluck('payment')->first()) {
             return abort(404);
         }
         return redirect(route('invoice'))->with([
@@ -109,7 +110,10 @@ class PointOfSaleController extends Controller
      */
     public function edit($id)
     {
-        //
+        if (request()->ajax()) {
+            return Cart::where('id', $id)->first();
+        }
+        return abort(404);
     }
 
     /**
@@ -119,9 +123,20 @@ class PointOfSaleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdatePosCartRequest $request, $id)
     {
-        //
+        if (request()->ajax()) {
+            $cart = Cart::with(['product'])->where('id', $request->id)->first();
+            Cart::where('user_id', Auth::user()->id)->where('id', $id)->update([
+                'quantity' => $request->quantity,
+                'amount' => $cart->product->price * $request->quantity,
+            ]);
+            return response()->json([
+                'status' => 1,
+                'message' => 'Cart item updated.'
+            ]);
+        }
+        return abort(404);
     }
 
     /**

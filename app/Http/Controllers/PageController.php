@@ -84,7 +84,7 @@ class PageController extends Controller
 
     public function invoice()
     {
-        return !Session::has('message') ? abort(404) :  view('pages/invoice');
+        return !Session::has('message') ? abort(404) : view('pages/invoice');
     }
 
     /**

@@ -19,6 +19,7 @@ class CreateCartsTable extends Migration
             $table->integer('product_id');
             $table->longText('name');
             $table->string('category');
+            $table->integer('discount')->nullable();
             $table->integer('price');
             $table->integer('quantity');
             $table->integer('amount');

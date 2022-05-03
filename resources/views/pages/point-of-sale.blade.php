@@ -59,10 +59,9 @@
             <div id="ticket" class="tab-pane active" role="tabpanel" aria-labelledby="ticket-tab">
                 <div class="box p-2 mt-5">
                     @foreach (\App\Models\Cart::where('user_id', Auth::user()->id)->get() as $cart)
-                    <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#edit-item-modal" data-id="{{ $cart->id }}" class="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md">
+                    <a href="javascript:;" id="cart-item" data-id="{{ $cart->id }}" class="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md">
                         <div class="max-w-[50%] truncate mr-1">{{ $cart->name }}</div>
                         <div class="text-slate-500">x {{ $cart->quantity }}</div>
-                        <i data-feather="edit" class="w-4 h-4 text-slate-500 ml-2"></i>
                         <div class="ml-auto font-medium">₱ {{ number_format($cart->amount / 100, 2) }}</div>
                     </a>
                     @endforeach
@@ -83,10 +82,12 @@
                     <span class="validation-error addpayment-error-payment {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                 </div>
                 <div class="box p-5 mt-5">
-                    <div class="flex mt-4">
+                    @if(\App\Models\Cart::where('user_id', Auth::user()->id)->pluck('discount')->first() > 0)
+                    <div class="flex">
                         <div class="mr-auto">Discount</div>
                         <div class="font-medium text-danger">-₱ 0.00</div>
                     </div>
+                    @endif
                     <div class="flex">
                         <div class="mr-auto font-medium text-base">Total Charge</div>
                         <div class="font-medium text-base">₱ {{ number_format(\App\Models\Cart::where('user_id', Auth::user()->id)->sum('amount') / 100, 2) }}</div>
@@ -102,7 +103,7 @@
                 </div>
                 <div class="flex mt-5">
                     <button class="btn w-32 border-slate-300 dark:border-darkmode-400 text-slate-500" data-tw-toggle="modal" data-tw-target="#cart-clear-modal">Clear Items</button>
-                    <button class="btn btn-primary w-32 shadow-md ml-auto charge-btn" {{ \App\Models\Cart::where('user_id', Auth::user()->id)->get()->isEmpty() ? 'disabled' : '' }} data-tw-toggle="modal" data-tw-target="#cart-checkout-modal">Charge</button>
+                    <button class="btn btn-primary w-32 shadow-md ml-auto charge-btn" {{ \App\Models\Cart::where('user_id', Auth::user()->id)->get()->isEmpty() ? 'disabled' : '' }} id="{{ \App\Models\Cart::where('user_id', Auth::user()->id)->sum('amount') > \App\Models\Cart::where('user_id', Auth::user()->id)->pluck('payment')->first() ? 'payment-incomplete' : 'payment-complete' }}">Charge</button>
                 </div>
             </div>
         </div>
@@ -144,7 +145,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="font-medium text-base mr-auto truncate product-title"></h2>
+                <h2 class="font-medium text-base mr-auto truncate edit-product-title"></h2>
             </div>
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                 <div class="col-span-12">
@@ -154,7 +155,6 @@
                         <input id="edit-quantity" type="text" class="form-control w-24 text-center" placeholder="Quantity" value="1">
                         <button type="button" class="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 ml-1" id="edit-qty-inc">+</button>
                     </div>
-                    <span class="validation-error edit-error-id {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     <span class="validation-error edit-error-quantity {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                 </div>
             </div>
@@ -181,21 +181,34 @@
     </div>
 </div>
 <!-- END: Clear Cart Modal -->
-<!-- BEGIN: Clear Cart Modal -->
-<div id="cart-checkout-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body p-0">
-                <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
-                    <div class="text-3xl mt-5">Proceed to Checkout?</div>
-                    <div class="text-slate-500 mt-2">Proceeding will submit the transaction.<br>Are you sure you want to continue?</div>
+<!-- BEGIN: Checkout Modal -->
+<div class="modal-container modal-payment-complete">
+    <div id="cart-checkout-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+                    <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
+                        <div class="text-3xl mt-5">Submit Transaction</div>
+                        <div class="text-slate-500 mt-2">Proceeding will submit the transaction.<br>Are you sure you want to continue?</div>
+                    </div>
+                    <div class="px-5 pb-8 text-center">
+                        <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button>
+                        <a href="{{ route('pos.create') }}" id="confirm-cart-checkout" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Yes</a>
+                    </div>
                 </div>
-                <div class="px-5 pb-8 text-center"> <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <a href="{{ route('pos.create') }}" type="button" id="confirm-cart-checkout" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Yes</a> </div>
             </div>
         </div>
     </div>
 </div>
-<!-- END: Clear Cart Modal -->
+<!-- END: Checkout Modal -->
+<!-- BEGIN: Danger Notification -->
+<div id="danger-notification" class="toastify-content hidden flex"> <i class="text-danger" data-feather="x-circle"></i>
+    <div class="ml-4 mr-4">
+        <div class="font-medium">Incomplete Payment</div>
+        <div class="text-slate-500 mt-1">Unable to proceed. Payment does not meet the total amount of the items in the cart.</div>
+    </div>
+</div>
+<!-- END: Danger Notification -->
 @endsection
 
 @section('script')
@@ -225,6 +238,7 @@
 
         function resetModalContent(){
             $("#quantity").val(1);
+            $("#edit-quantity").val(1);
             $('span.validation-error').text('');
         }
 
@@ -238,7 +252,6 @@
                     data: { submit: true },
                     dataType: "json",
                     success: function (response) {
-                        // $(".charge-btn").removeAttr("disabled");
                         $(".product-title").text(response.data.name);
                         $("#add-current-item").off().click(function (e) {
                             let qty = $("#quantity").val();
@@ -285,6 +298,46 @@
 
         $("#qty-inc").click(function (e) { $('#quantity').get(0).value++; });
         $("#qty-dec").click(function (e) { $('#quantity').get(0).value--; });
+
+        $("#edit-qty-inc").click(function (e) { $('#edit-quantity').get(0).value++; });
+        $("#edit-qty-dec").click(function (e) { $('#edit-quantity').get(0).value--; });
+
+        $("div#ticket").on("click", "#cart-item", function () {
+            const id = $(this).data('id');
+            $.ajax({
+                type: "POST",
+                url: "{{ route('pos') }}" + "/edit/" + id,
+                data: { submit: true },
+                dataType: "json",
+                success: function (response) {
+                    showModal('#edit-item-modal');
+                    $(".edit-product-title").text(response.name);
+                    $("#edit-selected-item").off().click(function (e) {
+                        let qty = $("#edit-quantity").val();
+                        $.ajax({
+                            type: "PATCH",
+                            url: "{{ route('pos') }}" + "/update/" + id,
+                            data: { id: id, quantity: qty },
+                            dataType: "json",
+                            success: function (response) {
+                                hideModal("#edit-item-modal");
+                                resetModalContent();
+                                reloadTicket();
+                            },
+                            error: function (xhr) {
+                                if(xhr.status == 422){
+                                    var errors = xhr.responseJSON.errors;
+                                    $('span.validation-error').text('');
+                                    $.each(errors, function (s, v) {
+                                        $('span.edit-error-'+s).text(v[0]);
+                                    });
+                                }
+                            }
+                        });
+                    });
+                }
+            });
+        });
 
         $("div.category-selection").click(function (e) {
             $("div.category-selection").removeClass('{{$dark_mode ? "category-selected" : "bg-primary"}} text-white');
@@ -341,6 +394,24 @@
                     reloadTicket();
                 }
             });
+        });
+
+        $("div#ticket").on("click", "#payment-incomplete", function () {
+            Toastify({
+                node: $("#danger-notification")
+                    .clone()
+                    .removeClass("hidden")[0],
+                duration: 5000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+            }).showToast();
+        });
+
+        $("div#ticket").on("click", "#payment-complete", function () {
+            showModal("#cart-checkout-modal");
         });
     });
 </script>
