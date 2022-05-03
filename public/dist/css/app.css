@@ -17228,6 +17228,10 @@ html body {
   --tw-bg-opacity: 1;
   background-color: rgb(var(--color-primary) / var(--tw-bg-opacity));
 }
+.dark .category-selected {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--color-primary) / var(--tw-bg-opacity));
+}
 .dark .dark\:text-slate-500 {
   --tw-text-opacity: 1;
   color: rgb(var(--color-slate-500) / var(--tw-text-opacity));

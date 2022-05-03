@@ -19,9 +19,9 @@
         </div>
         <div class="grid grid-cols-12 gap-5 mt-5">
             @foreach(\App\Models\ProductCategory::all() as $category)
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in category-selection" id="{{ $category->name }}" data-name="{{ $category->name }}">
+            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in category-selection {{ \App\Models\ProductCategory::pluck('name')->first() == $category->name ? ($dark_mode ? 'category-selected text-white' : 'bg-primary text-white') : '' }}" data-name="{{ $category->name }}">
                 <div class="font-medium text-base">{{ $category->name }}</div>
-                <div class="text-slate-500">{{ \App\Models\Product::with(['category'])->where('category', $category->name)->count() }} items</div>
+                <div class="text-sm">{{ \App\Models\Product::with(['category'])->where('category', $category->name)->count() }} items</div>
             </div>
             @endforeach
         </div>
@@ -59,7 +59,7 @@
             <div id="ticket" class="tab-pane active" role="tabpanel" aria-labelledby="ticket-tab">
                 <div class="box p-2 mt-5">
                     @foreach (\App\Models\Cart::where('user_id', Auth::user()->id)->get() as $cart)
-                    <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#add-item-modal" class="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md">
+                    <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#edit-item-modal" data-id="{{ $cart->id }}" class="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md">
                         <div class="max-w-[50%] truncate mr-1">{{ $cart->name }}</div>
                         <div class="text-slate-500">x {{ $cart->quantity }}</div>
                         <i data-feather="edit" class="w-4 h-4 text-slate-500 ml-2"></i>
@@ -120,6 +120,33 @@
     </div>
 </div>
 <!-- END: Add Item Modal -->
+<!-- BEGIN: Edit Item Modal -->
+<div id="edit-item-modal" class="modal" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="font-medium text-base mr-auto truncate product-title"></h2>
+            </div>
+            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                <div class="col-span-12">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <div class="flex mt-2 flex-1">
+                        <button type="button" class="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 mr-1" id="edit-qty-dec">-</button>
+                        <input id="edit-quantity" type="text" class="form-control w-24 text-center" placeholder="Quantity" value="1">
+                        <button type="button" class="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 ml-1" id="edit-qty-inc">+</button>
+                    </div>
+                    <span class="validation-error edit-error-id {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
+                    <span class="validation-error edit-error-quantity {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
+                </div>
+            </div>
+            <div class="modal-footer text-right">
+                <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1 cancel-item">Cancel</button>
+                <button type="button" class="btn btn-primary w-24" id="edit-selected-item">Add Item</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Edit Item Modal -->
 <!-- BEGIN: Clear Cart Modal -->
 <div id="cart-clear-modal" data-tw-backdrop="static" class="modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -242,6 +269,9 @@
         $("#qty-dec").click(function (e) { $('#quantity').get(0).value--; });
 
         $("div.category-selection").click(function (e) {
+            $("div.category-selection").removeClass('{{$dark_mode ? "category-selected" : "bg-primary"}} text-white');
+            $(this).addClass('{{$dark_mode ? "category-selected" : "bg-primary"}} text-white');
+            console.log($(this).text());
             const name = $(this).data("name");
             $.ajax({
                 type: "POST",
