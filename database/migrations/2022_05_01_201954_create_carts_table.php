@@ -22,6 +22,7 @@ class CreateCartsTable extends Migration
             $table->integer('price');
             $table->integer('quantity');
             $table->integer('amount');
+            $table->integer('payment');
             $table->timestamps();
         });
     }

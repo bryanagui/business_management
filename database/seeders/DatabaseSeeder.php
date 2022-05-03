@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RoomTypeSeeder::class);
         $this->call(ProductCategorySeeder::class);
         $this->call(ProductSeeder::class);
+        $this->call(CouponCodeSeeder::class);
         $this->call(RoomSeeder::class);
     }
 }

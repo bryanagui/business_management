@@ -21,7 +21,7 @@
             @foreach(\App\Models\ProductCategory::all() as $category)
             <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in category-selection {{ \App\Models\ProductCategory::pluck('name')->first() == $category->name ? ($dark_mode ? 'category-selected text-white' : 'bg-primary text-white') : '' }}" data-name="{{ $category->name }}">
                 <div class="font-medium text-base">{{ $category->name }}</div>
-                <div class="text-sm">{{ \App\Models\Product::with(['category'])->where('category', $category->name)->count() }} items</div>
+                <div class="text-sm">{{ \App\Models\Product::with(['category'])->where('category', $category->name)->count() }} {{ \App\Models\Product::with(['category'])->where('category', $category->name)->count() == 1 ? " item" : " items" }}</div>
             </div>
             @endforeach
         </div>
@@ -67,18 +67,37 @@
                     </a>
                     @endforeach
                 </div>
-                <div class="box flex p-5 mt-5">
-                    <input type="text" class="form-control py-3 px-4 w-full bg-slate-100 border-slate-200/60 pr-10" placeholder="Use coupon code...">
-                    <button class="btn btn-primary ml-2">Apply</button>
+                <div class="box p-5 mt-5">
+                    <h4 class="font-medium mb-2">Discount Coupon:</h4>
+                    <div class="flex">
+                        <input type="text" class="form-control py-3 px-4 w-full bg-slate-100 border-slate-200/60 pr-10" placeholder="Use coupon code...">
+                        <button class="btn btn-primary ml-2" {{ \App\Models\Cart::where('user_id', Auth::user()->id)->get()->isEmpty() ? 'disabled' : '' }}>Apply</button>
+                    </div>
                 </div>
                 <div class="box p-5 mt-5">
-                    {{-- <div class="flex mt-4">
+                    <h4 class="font-medium mb-2">Amount:</h4>
+                    <div class="flex payment-input-card">
+                        <input type="number" name="payment" id="payment" class="form-control py-3 px-4 w-full bg-slate-100 border-slate-200/60 pr-10" placeholder="Amount">
+                        <button class="btn btn-primary ml-2" id="apply-payment" {{ \App\Models\Cart::where('user_id', Auth::user()->id)->get()->isEmpty() ? 'disabled' : '' }}>Apply</button>
+                    </div>
+                    <span class="validation-error addpayment-error-payment {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
+                </div>
+                <div class="box p-5 mt-5">
+                    <div class="flex mt-4">
                         <div class="mr-auto">Discount</div>
-                        <div class="font-medium text-danger">-$20</div>
-                    </div> --}}
+                        <div class="font-medium text-danger">-₱ 0.00</div>
+                    </div>
                     <div class="flex">
                         <div class="mr-auto font-medium text-base">Total Charge</div>
-                        <div class="font-medium text-base">₱ {{ number_format((\App\Models\Cart::where('user_id', Auth::user()->id)->sum('amount') / 100), 2) }}</div>
+                        <div class="font-medium text-base">₱ {{ number_format(\App\Models\Cart::where('user_id', Auth::user()->id)->sum('amount') / 100, 2) }}</div>
+                    </div>
+                    <div class="flex">
+                        <div class="mr-auto font-medium text-base">Payment</div>
+                        <div class="font-medium text-base">₱ {{ number_format(\App\Models\Cart::where('user_id', Auth::user()->id)->pluck('payment')->first() / 100, 2) }}</div>
+                    </div>
+                    <div class="flex">
+                        <div class="mr-auto font-medium text-base">Change</div>
+                        <div class="font-medium text-base">₱ {{ number_format((\App\Models\Cart::where('user_id', Auth::user()->id)->pluck('payment')->first() / 100) - (\App\Models\Cart::where('user_id', Auth::user()->id)->sum('amount') / 100), 2) }}</div>
                     </div>
                 </div>
                 <div class="flex mt-5">
@@ -213,7 +232,6 @@
             $("div.products-list #product").on("click", function () {
                 showModal("#add-item-modal");
                 let id = $(this).attr("data-id");
-                console.log(id);
                 $.ajax({
                     type: "POST",
                     url: "{{ route('pos') }}" + '/show/' + id,
@@ -271,7 +289,6 @@
         $("div.category-selection").click(function (e) {
             $("div.category-selection").removeClass('{{$dark_mode ? "category-selected" : "bg-primary"}} text-white');
             $(this).addClass('{{$dark_mode ? "category-selected" : "bg-primary"}} text-white');
-            console.log($(this).text());
             const name = $(this).data("name");
             $.ajax({
                 type: "POST",
@@ -286,6 +303,26 @@
                             $("div.products-list").append('<a href="javascript:;" id="product" data-id="' + v.id + '" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">\n<div class="box rounded-md p-3 relative zoom-in">\n<div class="flex-none relative block before:block before:w-full before:pt-[100%]">\n<div class="absolute top-0 left-0 w-full h-full image-fit">\n<img alt="Product Thumbnail" class="rounded-md" src="' + image + '">\n</div>\n</div>\n<div class="block font-medium text-center truncate mt-3">'+ v.name +'</div>\n<div class="block text-center truncate">Price: ₱ '+ (v.price / 100).toFixed(2) +'</div>\n</div>\n</a>');
                         });
                         getProductInfo();
+                    }
+                }
+            });
+        });
+
+        $("div#ticket").on("click", "#apply-payment", function () {
+            const payment = $("#payment").val();
+            console.log('test');
+            $.ajax({
+                type: "POST",
+                url: "{{ route('pos.set_payment') }}",
+                data: { payment: payment },
+                dataType: "json",
+                success: function (response) {
+                    reloadTicket();
+                },
+                error: function (xhr) {
+                    if(xhr.status == 422){
+                        var errors = xhr.responseJSON.errors;
+                        $(".addpayment-error-payment").text(errors.payment[0]);
                     }
                 }
             });

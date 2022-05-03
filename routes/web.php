@@ -75,6 +75,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('destroy', [PointOfSaleController::class, 'destroy'])->name('pos.destroy'); // DELETE
         Route::patch('restore/{id}', [PointOfSaleController::class, 'restore'])->name('pos.restore'); // DELETE (Restore)
         Route::get('create', [PointOfSaleController::class, 'create'])->name('pos.create');
+
+        Route::post('set-payment', [PointOfSaleController::class, 'setPayment'])->name('pos.set_payment');
         Route::post('switch', [SwitchCategoryController::class, 'switch'])->name('pos.switch');
         // END: POS Resource Requests
     });

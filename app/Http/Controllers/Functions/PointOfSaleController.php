@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Functions;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PosPaymentRequest;
 use App\Http\Requests\StorePosRequest;
 use App\Models\Cart;
 use App\Models\Product;
@@ -45,11 +46,36 @@ class PointOfSaleController extends Controller
                 'price' => $product->price,
                 'quantity' => $request->quantity,
                 'amount' => $product->price * $request->quantity,
+                'payment' => 0,
             ]);
 
             return response()->json([
                 'status' => 1,
                 'message' => 'Item added to cart.'
+            ]);
+        }
+        return abort(404);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function setPayment(PosPaymentRequest $request)
+    {
+        if (request()->ajax()) {
+            $validated = $request->validated();
+            $validated['payment'] = $request->payment * 100;
+
+            Cart::where('user_id', Auth::user()->id)->update([
+                'payment' => $validated['payment']
+            ]);
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Payment has been set successfully.'
             ]);
         }
         return abort(404);
