@@ -127,6 +127,13 @@ class PointOfSaleController extends Controller
     {
         if (request()->ajax()) {
             $cart = Cart::with(['product'])->where('id', $request->id)->first();
+            if ($request->quantity == 0) {
+                Cart::where('user_id', Auth::user()->id)->where('id', $id)->delete();
+                return response()->json([
+                    'status' => 1,
+                    'message' => 'Removed from cart.'
+                ]);
+            }
             Cart::where('user_id', Auth::user()->id)->where('id', $id)->update([
                 'quantity' => $request->quantity,
                 'amount' => $cart->product->price * $request->quantity,

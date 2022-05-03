@@ -160,7 +160,7 @@
             </div>
             <div class="modal-footer text-right">
                 <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1 cancel-item">Cancel</button>
-                <button type="button" class="btn btn-primary w-24" id="edit-selected-item">Add Item</button>
+                <button type="button" class="btn btn-primary w-32" id="edit-selected-item">Update Item</button>
             </div>
         </div>
     </div>
@@ -337,6 +337,11 @@
                     });
                 }
             });
+        });
+
+        $("div#ticket").on("contextmenu", "#cart-item", function () {
+            const id = $(this).data('id');
+            alert(id);
         });
 
         $("div.category-selection").click(function (e) {

@@ -26,7 +26,19 @@ class UpdatePosCartRequest extends FormRequest
     public function rules()
     {
         return [
-            'quantity' => 'required|numeric|min:1|max:' . Product::where('id', Cart::where('id', $this->id)->pluck('product_id')->first())->pluck('stock')->first() - Cart::where('product_id', Cart::where('id', $this->id)->pluck('product_id')->first())->sum('quantity'),
+            'quantity' => 'required|numeric|min:0|max:' . Product::where('id', Cart::where('id', $this->id)->pluck('product_id')->first())->pluck('stock')->first() - Cart::where('product_id', Cart::where('id', $this->id)->pluck('product_id')->first())->sum('quantity'),
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'quantity.max' => 'Quantity exceeds available stock.'
         ];
     }
 }

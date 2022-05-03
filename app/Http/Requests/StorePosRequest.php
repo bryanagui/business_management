@@ -44,6 +44,7 @@ class StorePosRequest extends FormRequest
     {
         return [
             'id.unique' => 'The item already exists in your cart.',
+            'quantity.max' => 'Quantity exceeds available stock.'
         ];
     }
 }
