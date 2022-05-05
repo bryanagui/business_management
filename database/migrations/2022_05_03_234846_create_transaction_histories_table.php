@@ -16,7 +16,7 @@ class CreateTransactionHistoriesTable extends Migration
         Schema::create('transaction_histories', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->integer('transaction_id');
+            $table->bigInteger('transaction_id')->nullable();
             $table->integer('product_id');
             $table->longText('name');
             $table->string('category');
@@ -24,7 +24,6 @@ class CreateTransactionHistoriesTable extends Migration
             $table->integer('price');
             $table->integer('quantity');
             $table->integer('amount');
-            $table->integer('payment');
             $table->timestamps();
         });
     }

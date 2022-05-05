@@ -36,6 +36,7 @@
                     </div>
                     <div class="block font-medium text-center truncate mt-3">{{ $product->name }}</div>
                     <div class="block text-center truncate">Price: ₱ {{ number_format($product->price / 100, 2) }}</div>
+                    <div class="block text-center truncate">Stock: {{ $product->stock }}</div>
                 </div>
             </a>
             @endforeach
@@ -348,10 +349,20 @@
                 dataType: "json",
                 success: function (response) {
                     $("div.products-list").text('');
+                    function addCommas(str){
+                        var arr,int,dec;
+                        str += '';
+
+                        arr = str.split('.');
+                        int = arr[0] + '';
+                        dec = arr.length>1?'.'+arr[1]:'';
+                        return int.replace(/(\d)(?=(\d{3})+$)/g,"$1,") + '.' + parseFloat(dec).toFixed(2).split('.')[1];
+                    }
                     if(!response.length == 0){
                         $.each(response, function (i, v) {
                             const image = v.media == null ? "{{ asset('storage/static/images') . '/nothumb.jpg'  }}" : "{{ asset('storage/static/product_images') }}/" + v.media
-                            $("div.products-list").append('<a href="javascript:;" id="product" data-id="' + v.id + '" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">\n<div class="box rounded-md p-3 relative zoom-in">\n<div class="flex-none relative block before:block before:w-full before:pt-[100%]">\n<div class="absolute top-0 left-0 w-full h-full image-fit">\n<img alt="Product Thumbnail" class="rounded-md" src="' + image + '">\n</div>\n</div>\n<div class="block font-medium text-center truncate mt-3">'+ v.name +'</div>\n<div class="block text-center truncate">Price: ₱ '+ (v.price / 100).toFixed(2) +'</div>\n</div>\n</a>');
+                            const price = v.price / 100;
+                            $("div.products-list").append('<a href="javascript:;" id="product" data-id="' + v.id + '" class="intro-y block col-span-12 sm:col-span-4 2xl:col-span-3 product">\n<div class="box rounded-md p-3 relative zoom-in">\n<div class="flex-none relative block before:block before:w-full before:pt-[100%]">\n<div class="absolute top-0 left-0 w-full h-full image-fit">\n<img alt="Product Thumbnail" class="rounded-md" src="' + image + '">\n</div>\n</div>\n<div class="block font-medium text-center truncate mt-3">'+ v.name +'</div>\n<div class="block text-center truncate">Price: ₱'+ addCommas(price.toFixed(2)) +'</div><div class="block text-center truncate">Stock: '+ v.stock +'</div>\n</div>\n</a>');
                         });
                         getProductInfo();
                     }

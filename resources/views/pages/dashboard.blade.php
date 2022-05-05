@@ -51,21 +51,22 @@
                     <h2 class="text-lg font-medium truncate mr-5">My Daily Report</h2>
                 </div>
                 <div class="grid grid-cols-12 gap-6 mt-5">
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
                         <div class="report-box zoom-in">
                             <div class="box p-5">
                                 <div class="flex">
                                     <i data-feather="dollar-sign" class="report-box__icon text-primary"></i>
                                 </div>
                                 <div class="text-3xl font-medium leading-8 mt-6">
+                                    <!-- Must be Transactions + Accomodations -->
                                     <span>₱</span>
-                                    <span>0.00</span>
+                                    <span>{{ number_format(\App\Models\Transaction::where('user_id', Auth::user()->id)->sum('amount') / 100, 2) }}</span>
                                 </div>
                                 <div class="text-base text-slate-500 mt-1">Total Revenue</div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
                         <div class="report-box zoom-in">
                             <div class="box p-5">
                                 <div class="flex">
@@ -79,7 +80,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
                         <div class="report-box zoom-in">
                             <div class="box p-5">
                                 <div class="flex">
@@ -87,22 +88,9 @@
                                 </div>
                                 <div class="text-3xl font-medium leading-8 mt-6">
                                     <span>₱</span>
-                                    <span>0.00</span>
+                                    <span>{{ number_format(\App\Models\Transaction::where('user_id', Auth::user()->id)->sum('amount') / 100, 2) }}</span>
                                 </div>
                                 <div class="text-base text-slate-500 mt-1">Product Sales</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
-                        <div class="report-box zoom-in">
-                            <div class="box p-5">
-                                <div class="flex">
-                                    <i data-feather="heart" class="report-box__icon text-success"></i>
-                                </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    <span>0 / {{ \App\Models\Room::count() }}</span>
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Rooms</div>
                             </div>
                         </div>
                     </div>
@@ -115,7 +103,7 @@
                     <h2 class="text-lg font-medium truncate mr-5">Total Daily Report</h2>
                 </div>
                 <div class="grid grid-cols-12 gap-6 mt-5">
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
                         <div class="report-box zoom-in">
                             <div class="box p-5">
                                 <div class="flex">
@@ -123,13 +111,13 @@
                                 </div>
                                 <div class="text-3xl font-medium leading-8 mt-6">
                                     <span>₱</span>
-                                    <span>0.00</span>
+                                    <span>{{ number_format(\App\Models\Transaction::sum('amount') / 100, 2) }}</span>
                                 </div>
                                 <div class="text-base text-slate-500 mt-1">Total Revenue</div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
                         <div class="report-box zoom-in">
                             <div class="box p-5">
                                 <div class="flex">
@@ -143,7 +131,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
                         <div class="report-box zoom-in">
                             <div class="box p-5">
                                 <div class="flex">
@@ -151,22 +139,9 @@
                                 </div>
                                 <div class="text-3xl font-medium leading-8 mt-6">
                                     <span>₱</span>
-                                    <span>0.00</span>
+                                    <span>{{ number_format(\App\Models\Transaction::sum('amount') / 100, 2) }}</span>
                                 </div>
                                 <div class="text-base text-slate-500 mt-1">Product Sales</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
-                        <div class="report-box zoom-in">
-                            <div class="box p-5">
-                                <div class="flex">
-                                    <i data-feather="heart" class="report-box__icon text-success"></i>
-                                </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    <span>0 / {{ \App\Models\Room::count() }}</span>
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Rooms</div>
                             </div>
                         </div>
                     </div>
@@ -305,17 +280,17 @@
                         <h2 class="text-lg font-medium truncate mr-5">Recent Transactions</h2>
                     </div>
                     <div class="mt-5">
-                        @foreach (array_slice($fakers, 0, 20) as $faker)
+                        @foreach (\App\Models\Transaction::with(['user'])->get() as $transaction)
                         <div class="intro-x">
                             <div class="box px-5 py-3 mb-3 flex items-center zoom-in">
                                 <div class="w-10 h-10 flex-none image-fit rounded-full overflow-hidden">
-                                    <img alt="Rubick Tailwind HTML Admin Template" src="{{ asset('dist/images/' . $faker['photos'][0]) }}">
+                                    <img alt="Profile Picture" src="{{ asset('storage/static/images' . '/' . $transaction->user->photo) }}">
                                 </div>
                                 <div class="ml-4 mr-auto">
-                                    <div class="font-medium">{{ $faker['users'][0]['name'] }}</div>
-                                    <div class="text-slate-500 text-xs mt-0.5">{{ $faker['dates'][0] }}</div>
+                                    <div class="font-medium">{{ $transaction->user->name }}</div>
+                                    <div class="text-slate-500 text-xs mt-0.5">{{ (new Carbon\Carbon($transaction->created_at))->format('F d, Y h:i:sa') }}</div>
                                 </div>
-                                <div class="{{ $faker['true_false'][0] ? 'text-success' : 'text-danger' }}">{{ $faker['true_false'][0] ? '+' : '-' }}${{ $faker['totals'][0] }}</div>
+                                <div class="text-success">+ ₱{{ number_format($transaction->amount / 100, 2) }}</div>
                             </div>
                         </div>
                         @endforeach

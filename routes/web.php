@@ -14,6 +14,7 @@ use App\Http\Controllers\Functions\PointOfSaleController;
 use App\Http\Controllers\Functions\StaffController;
 use App\Http\Controllers\Functions\RoomManagementController;
 use App\Http\Controllers\Functions\SwitchCategoryController;
+use App\Http\Controllers\Functions\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +84,18 @@ Route::middleware('auth')->group(function () {
 
 
     Route::middleware('role:Administrator|Twice|Hotel Owner|Manager|Executive')->group(function () {
+        // Route: Transactions //
+        // BEGIN: Transactions Resource Requests
+        Route::group(['prefix' => 'transaction'], function () {
+            Route::post('store', [TransactionController::class, 'store'])->name('transaction.store'); // CREATE
+            Route::post('edit/{id}', [TransactionController::class, 'edit'])->name('transaction.edit'); // READ
+            Route::post('show/{id}', [TransactionController::class, 'show'])->name('transaction.show'); // READ
+            Route::patch('update/{id}', [TransactionController::class, 'update'])->name('transaction.update'); // UPDATE
+            Route::delete('destroy/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy'); // DELETE
+            Route::patch('restore/{id}', [TransactionController::class, 'restore'])->name('transaction.restore'); // DELETE (Restore)
+        });
+        // END: Transactions Resource Requests
+
         // Route: Staff //
         // BEGIN: Staff Resource Requests
         Route::group(['prefix' => 'staff'], function () {
