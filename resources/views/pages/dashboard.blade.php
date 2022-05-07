@@ -280,7 +280,7 @@
                         <h2 class="text-lg font-medium truncate mr-5">Recent Transactions</h2>
                     </div>
                     <div class="mt-5">
-                        @foreach (\App\Models\Transaction::with(['user'])->get() as $transaction)
+                        @foreach (\App\Models\Transaction::with(['user'])->orderBy('created_at', 'desc')->get() as $transaction)
                         <div class="intro-x">
                             <div class="box px-5 py-3 mb-3 flex items-center zoom-in">
                                 <div class="w-10 h-10 flex-none image-fit rounded-full overflow-hidden">

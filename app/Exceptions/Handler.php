@@ -36,8 +36,8 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->renderable(function (MethodNotAllowedHttpException $e, Request $request) {
-            return response()->view('errors.404', [], 404);
-        });
+        // $this->renderable(function (MethodNotAllowedHttpException $e, Request $request) {
+        //     return response()->view('errors.404', [], 404);
+        // });
     }
 }

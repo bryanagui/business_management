@@ -91,7 +91,7 @@ Route::middleware('auth')->group(function () {
             Route::post('edit/{id}', [TransactionController::class, 'edit'])->name('transaction.edit'); // READ
             Route::post('show/{id}', [TransactionController::class, 'show'])->name('transaction.show'); // READ
             Route::patch('update/{id}', [TransactionController::class, 'update'])->name('transaction.update'); // UPDATE
-            Route::delete('destroy/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy'); // DELETE
+            Route::delete('destroy', [TransactionController::class, 'destroy'])->name('transaction.destroy'); // DELETE
             Route::patch('restore/{id}', [TransactionController::class, 'restore'])->name('transaction.restore'); // DELETE (Restore)
         });
         // END: Transactions Resource Requests

@@ -18,7 +18,7 @@
         <div class="px-5 py-10 sm:px-20 sm:py-20">
             <div class="text-primary font-semibold text-3xl">RESERV8TION</div>
             <div class="mt-2 transaction-id">
-                <i data-loading-icon="three-dots" class="w-8 h-8"></i>
+                Receipt #{{ \App\Models\Transaction::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->pluck('transaction_id')->first() }}
             </div>
             <div class="mt-1">{{ (\Carbon\Carbon::now())->format('F d, Y h:i:sa') }}</div>
         </div>
@@ -90,13 +90,10 @@
         });
 
         $.ajax({
-            type: "POST",
-            url: "{{ route('transaction.store') }}",
+            type: "DELETE",
+            url: "{{ route('transaction.destroy') }}",
             data: { submit: true },
             dataType: "json",
-            success: function (response) {
-                $(".transaction-id").text("Receipt #" + response.transaction_id);
-            }
         });
     });
     </script>

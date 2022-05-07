@@ -8,6 +8,13 @@
 <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
     <h2 class="text-lg font-medium mr-auto">Point of Sale</h2>
 </div>
+@if(Session::has('message'))
+<div class="intro-y alert alert-outline-danger alert-dismissible show flex items-center mt-4 mb-4" role="alert">
+    <i data-feather="alert-octagon" class="w-6 h-6 mr-2"></i>
+    {{ Session::get('message') }}
+    <button type="button" class="btn-close text-white" data-tw-dismiss="alert" aria-label="Close"> <i data-feather="x" class="w-4 h-4"></i> </button>
+</div>
+@endif
 <div class="intro-y grid grid-cols-12 gap-5 mt-5 item-list hidden">
     <!-- BEGIN: Item List -->
     <div class="intro-y col-span-12 lg:col-span-8">
@@ -181,14 +188,17 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body p-0">
-                    <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
-                        <div class="text-3xl mt-5">Submit Transaction</div>
-                        <div class="text-slate-500 mt-2">Proceeding will submit the transaction.<br>Are you sure you want to continue?</div>
-                    </div>
-                    <div class="px-5 pb-8 text-center">
-                        <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button>
-                        <a href="{{ route('pos.create') }}" id="confirm-cart-checkout" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Yes</a>
-                    </div>
+                    <form action="{{ route('transaction.store') }}" method="POST">
+                        @csrf
+                        <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
+                            <div class="text-3xl mt-5">Submit Transaction</div>
+                            <div class="text-slate-500 mt-2">Proceeding will submit the transaction.<br>Are you sure you want to continue?</div>
+                        </div>
+                        <div class="px-5 pb-8 text-center">
+                            <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button>
+                            <button type="submit" id="confirm-cart-checkout" class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Yes</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -198,8 +208,8 @@
 <!-- BEGIN: Danger Notification -->
 <div id="danger-notification" class="toastify-content hidden flex"> <i class="text-danger" data-feather="x-circle"></i>
     <div class="ml-4 mr-4">
-        <div class="font-medium">Incomplete Payment</div>
-        <div class="text-slate-500 mt-1">Unable to proceed. Payment does not meet the total amount of the items in the cart.</div>
+        <div class="font-medium toast-title"></div>
+        <div class="text-slate-500 mt-1 toast-content"></div>
     </div>
 </div>
 <!-- END: Danger Notification -->
@@ -236,9 +246,24 @@
             $('span.validation-error').text('');
         }
 
+        function showDangerNotification(title, content){
+            $(".toast-title").text(title);
+            $(".toast-content").text(content);
+            Toastify({
+                node: $("#danger-notification")
+                    .clone()
+                    .removeClass("hidden")[0],
+                duration: 5000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+            }).showToast();
+        }
+
         function getProductInfo(){
             $("div.products-list #product").on("click", function () {
-                showModal("#add-item-modal");
                 let id = $(this).attr("data-id");
                 $.ajax({
                     type: "POST",
@@ -246,30 +271,41 @@
                     data: { submit: true },
                     dataType: "json",
                     success: function (response) {
-                        $(".product-title").text(response.data.name);
-                        $("#add-current-item").off().click(function (e) {
-                            let qty = $("#quantity").val();
-                            $.ajax({
-                                type: "POST",
-                                url: "{{ route('pos.store') }}",
-                                data: { id: id, quantity: qty },
-                                dataType: "json",
-                                success: function (response) {
-                                    hideModal("#add-item-modal");
-                                    resetModalContent();
-                                    reloadTicket();
-                                },
-                                error: function (xhr) {
-                                    if(xhr.status == 422){
-                                        var errors = xhr.responseJSON.errors;
-                                        $('span.validation-error').text('');
-                                        $.each(errors, function (s, v) {
-                                            $('span.error-'+s).text(v[0]);
-                                        });
-                                    }
-                                }
-                            });
-                        });
+                        if(response.data == null){
+                            showDangerNotification("Item does not exist", "The item does not exist. Have you changed something?")
+                        }
+                        else {
+                            if(response.data.stock != 0) {
+                                showModal("#add-item-modal");
+                                $(".product-title").text(response.data.name);
+                                $("#add-current-item").off().click(function (e) {
+                                    let qty = $("#quantity").val();
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "{{ route('pos.store') }}",
+                                        data: { id: id, quantity: qty },
+                                        dataType: "json",
+                                        success: function (response) {
+                                            hideModal("#add-item-modal");
+                                            resetModalContent();
+                                            reloadTicket();
+                                        },
+                                        error: function (xhr) {
+                                            if(xhr.status == 422){
+                                                var errors = xhr.responseJSON.errors;
+                                                $('span.validation-error').text('');
+                                                $.each(errors, function (s, v) {
+                                                    $('span.error-'+s).text(v[0]);
+                                                });
+                                            }
+                                        }
+                                    });
+                                });
+                            }
+                            else {
+                                showDangerNotification("Out of Stock", "The item " + response.data.name + " has ran out of stock")
+                            }
+                        }
                     }
                 });
             });
@@ -406,17 +442,7 @@
         });
 
         $("div#ticket").on("click", "#payment-incomplete", function () {
-            Toastify({
-                node: $("#danger-notification")
-                    .clone()
-                    .removeClass("hidden")[0],
-                duration: 5000,
-                newWindow: true,
-                close: true,
-                gravity: "top",
-                position: "right",
-                stopOnFocus: true,
-            }).showToast();
+            showDangerNotification("Payment Incomplete", "Payment does not meet the item costs.")
         });
 
         $("div#ticket").on("click", "#payment-complete", function () {

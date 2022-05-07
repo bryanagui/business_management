@@ -40,43 +40,57 @@ class TransactionController extends Controller
      */
     public function store()
     {
-        if (request()->ajax()) {
-            $cart = Cart::where('user_id', Auth::user()->id);
-            $id = time() * 2;
-            Transaction::create([
-                'user_id' => Auth::user()->id,
-                'transaction_id' => $id,
-                'amount' => $cart->sum('amount'),
-                'payment' => $cart->pluck('payment')->first(),
-                'change' => $cart->pluck('payment')->first() - $cart->sum('amount'),
-            ]);
+        $cart = Cart::where('user_id', Auth::user()->id);
+        $id = time() * 2;
 
-            foreach ($cart->get() as $item) {
-                TransactionHistory::create([
-                    'user_id' => Auth::user()->id,
-                    'transaction_id' => $id,
-                    'product_id' => $item->product_id,
-                    'name' => $item->name,
-                    'category' => $item->category,
-                    'price' => $item->price,
-                    'quantity' => $item->quantity,
-                    'amount' => $item->amount,
-                ]);
-
-                Product::where('id', $item->product_id)->where('name', $item->name)->update([
-                    'stock' => intval(Product::where('id', $item->product_id)->where('name', $item->name)->pluck('stock')->first()) - intval($item->quantity)
-                ]);
-            }
-
-            Cart::where('user_id', Auth::user()->id)->delete();
-
-            return response()->json([
-                'status' => 1,
-                'message' => 'Transaction complete.',
-                'transaction_id' => $id,
+        if (Cart::where('user_id', Auth::user()->id)->get()->isEmpty()) {
+            return redirect()->back()->with([
+                'status' => 0,
+                'message' => 'Your cart is empty. Please try again with an item in the cart.'
             ]);
         }
-        return abort(404);
+
+        if (Cart::where('user_id', Auth::user()->id)->sum('amount') > Cart::where('user_id', Auth::user()->id)->pluck('payment')->first()) {
+            return redirect()->back()->with([
+                'status' => 0,
+                'message' => 'Unable to complete current transaction. No payments were found.'
+            ]);
+        }
+
+        foreach ($cart->get() as $item) {
+            if (intval($item->quantity) - intval(Product::where('id', $item->product_id)->pluck('stock')->first()) > 0) {
+                return redirect()->intended(route('pos'))->with([
+                    'message' => 'Unable to complete current transaction. The item ' . $item->name . ' has exceeded the current available stocks. Available: ' . Product::where('id', $item->product_id)->pluck('stock')->first(),
+                ]);
+            }
+            TransactionHistory::create([
+                'user_id' => Auth::user()->id,
+                'transaction_id' => $id,
+                'product_id' => $item->product_id,
+                'name' => $item->name,
+                'category' => $item->category,
+                'price' => $item->price,
+                'quantity' => $item->quantity,
+                'amount' => $item->amount,
+            ]);
+
+            Product::where('id', $item->product_id)->where('name', $item->name)->update([
+                'stock' => intval(Product::where('id', $item->product_id)->where('name', $item->name)->pluck('stock')->first()) - intval($item->quantity)
+            ]);
+        }
+
+        Transaction::create([
+            'user_id' => Auth::user()->id,
+            'transaction_id' => $id,
+            'amount' => $cart->sum('amount'),
+            'payment' => $cart->pluck('payment')->first(),
+            'change' => $cart->pluck('payment')->first() - $cart->sum('amount'),
+        ]);
+
+        return redirect(route('invoice'))->with([
+            'status' => 1,
+            'message' => 'Submitted',
+        ]);
     }
 
     /**
@@ -119,8 +133,15 @@ class TransactionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy()
     {
-        //
+        if (request()->ajax()) {
+            Cart::where('user_id', Auth::user()->id)->delete();
+            return response()->json([
+                'status' => 1,
+                'message' => 'Operation completed.'
+            ]);
+        }
+        return abort(404);
     }
 }
