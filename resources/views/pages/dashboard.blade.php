@@ -55,99 +55,32 @@
                         <div class="report-box zoom-in">
                             <div class="box p-5">
                                 <div class="flex">
-                                    <i data-feather="dollar-sign" class="report-box__icon text-primary"></i>
-                                </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    <!-- Must be Transactions + Accomodations -->
-                                    <span>₱</span>
-                                    <span>{{ number_format(\App\Models\Transaction::where('user_id', Auth::user()->id)->sum('amount') / 100, 2) }}</span>
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Total Revenue</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
-                        <div class="report-box zoom-in">
-                            <div class="box p-5">
-                                <div class="flex">
-                                    <i data-feather="user" class="report-box__icon text-pending"></i>
-                                </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    <span>₱</span>
-                                    <span>0.00</span>
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Accomodation Sales</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
-                        <div class="report-box zoom-in">
-                            <div class="box p-5">
-                                <div class="flex">
                                     <i data-feather="shopping-cart" class="report-box__icon text-warning"></i>
                                 </div>
                                 <div class="text-3xl font-medium leading-8 mt-6">
                                     <span>₱</span>
-                                    <span>{{ number_format(\App\Models\Transaction::where('user_id', Auth::user()->id)->sum('amount') / 100, 2) }}</span>
+                                    <span>{{ number_format(\App\Models\Transaction::where('user_id', Auth::user()->id)->whereDate('created_at', \Carbon\Carbon::today())->sum('amount') / 100, 2) }}</span>
                                 </div>
                                 <div class="text-base text-slate-500 mt-1">Product Sales</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
+                        <div class="report-box zoom-in">
+                            <div class="box p-5">
+                                <div class="flex">
+                                    <i data-feather="shopping-bag" class="report-box__icon text-warning"></i>
+                                </div>
+                                <div class="text-3xl font-medium leading-8 mt-6">
+                                    <span>{{ \App\Models\TransactionHistory::where('user_id', Auth::user()->id)->whereDate('created_at', \Carbon\Carbon::today())->sum('quantity') }}</span>
+                                </div>
+                                <div class="text-base text-slate-500 mt-1">Products Sold</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- END: Today's Report -->
-            <!-- BEGIN: Weekly Report -->
-            <div class="col-span-12 mt-8">
-                <div class="intro-y flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">Total Daily Report</h2>
-                </div>
-                <div class="grid grid-cols-12 gap-6 mt-5">
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
-                        <div class="report-box zoom-in">
-                            <div class="box p-5">
-                                <div class="flex">
-                                    <i data-feather="dollar-sign" class="report-box__icon text-primary"></i>
-                                </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    <span>₱</span>
-                                    <span>{{ number_format(\App\Models\Transaction::sum('amount') / 100, 2) }}</span>
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Total Revenue</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
-                        <div class="report-box zoom-in">
-                            <div class="box p-5">
-                                <div class="flex">
-                                    <i data-feather="user" class="report-box__icon text-pending"></i>
-                                </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    <span>₱</span>
-                                    <span>0.00</span>
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Accomodation Sales</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
-                        <div class="report-box zoom-in">
-                            <div class="box p-5">
-                                <div class="flex">
-                                    <i data-feather="shopping-cart" class="report-box__icon text-warning"></i>
-                                </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    <span>₱</span>
-                                    <span>{{ number_format(\App\Models\Transaction::sum('amount') / 100, 2) }}</span>
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Product Sales</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- END: Weekly Report -->
             <!-- BEGIN: Sales Report -->
             <div class="col-span-12 lg:col-span-6 mt-8">
                 <div class="intro-y block sm:flex items-center h-10">
@@ -157,72 +90,43 @@
                     <div class="flex flex-col xl:flex-row xl:items-center">
                         <div class="flex">
                             <div>
-                                <div class="text-primary dark:text-slate-300 text-lg xl:text-xl font-medium">0</div>
+                                <div class="text-primary dark:text-slate-300 text-lg xl:text-xl font-medium">₱ {{ number_format(\App\Models\Transaction::where('user_id', Auth::user()->id)->whereBetween('created_at', [(\Carbon\Carbon::now()->startOfWeek()), \Carbon\Carbon::now()->endOfWeek()])->sum('amount') / 100, 2) }}</div>
                                 <div class="mt-0.5 text-slate-500">This Week</div>
                             </div>
                             <div class="w-px h-12 border border-r border-dashed border-slate-200 dark:border-darkmode-300 mx-4 xl:mx-5"></div>
                             <div>
-                                <div class="text-slate-500 text-lg xl:text-xl font-medium">0</div>
+                                <div class="text-slate-500 text-lg xl:text-xl font-medium">₱ {{ number_format(\App\Models\Transaction::where('user_id', Auth::user()->id)->whereBetween('created_at', [(\Carbon\Carbon::now()->startOfWeek()->subWeek()), \Carbon\Carbon::now()->endOfWeek()->subWeek()])->sum('amount') / 100, 2) }}</div>
                                 <div class="mt-0.5 text-slate-500">Last Week</div>
                             </div>
                         </div>
                     </div>
                     <div class="report-chart">
-                        <canvas id="report-line-chart" height="169" class="mt-6"></canvas>
+                        <canvas id="sales-chart" height="169" class="mt-6"></canvas>
                     </div>
                 </div>
             </div>
             <!-- END: Sales Report -->
-            <!-- BEGIN: Weekly Top Seller -->
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 mt-8">
-                <div class="intro-y flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">Weekly Top Seller</h2>
+            <!-- BEGIN: Sales Report -->
+            <div class="col-span-12 lg:col-span-6 mt-8">
+                <div class="intro-y block sm:flex items-center h-10">
+                    <h2 class="text-lg font-medium truncate mr-5">Items Sold Report</h2>
                 </div>
-                <div class="intro-y box p-5 mt-5">
-                    <canvas class="mt-3" id="report-pie-chart" height="300"></canvas>
-                    <div class="mt-8">
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                            <span class="truncate">17 - 30 Years old</span>
-                            <span class="font-medium xl:ml-auto">62%</span>
-                        </div>
-                        <div class="flex items-center mt-4">
-                            <div class="w-2 h-2 bg-pending rounded-full mr-3"></div>
-                            <span class="truncate">31 - 50 Years old</span>
-                            <span class="font-medium xl:ml-auto">33%</span>
-                        </div>
-                        <div class="flex items-center mt-4">
-                            <div class="w-2 h-2 bg-warning rounded-full mr-3"></div>
-                            <span class="truncate">>= 50 Years old</span>
-                            <span class="font-medium xl:ml-auto">10%</span>
+                <div class="intro-y box p-5 mt-12 sm:mt-5">
+                    <div class="flex flex-col xl:flex-row xl:items-center">
+                        <div class="flex">
+                            <div>
+                                <div class="text-primary dark:text-slate-300 text-lg xl:text-xl font-medium">{{ \App\Models\TransactionHistory::where('user_id', Auth::user()->id)->whereBetween('created_at', [(\Carbon\Carbon::now()->startOfWeek()), \Carbon\Carbon::now()->endOfWeek()])->sum('quantity') }}</div>
+                                <div class="mt-0.5 text-slate-500">Items Sold This Week</div>
+                            </div>
+                            <div class="w-px h-12 border border-r border-dashed border-slate-200 dark:border-darkmode-300 mx-4 xl:mx-5"></div>
+                            <div>
+                                <div class="text-slate-500 text-lg xl:text-xl font-medium">{{ \App\Models\TransactionHistory::where('user_id', Auth::user()->id)->whereBetween('created_at', [(\Carbon\Carbon::now()->startOfWeek()->subWeek()), \Carbon\Carbon::now()->endOfWeek()->subWeek()])->sum('quantity') }}</div>
+                                <div class="mt-0.5 text-slate-500">Items Sold Last Week</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <!-- END: Weekly Top Seller -->
-            <!-- BEGIN: Sales Report -->
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 mt-8">
-                <div class="intro-y flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">Sales Report</h2>
-                </div>
-                <div class="intro-y box p-5 mt-5">
-                    <canvas class="mt-3" id="report-donut-chart" height="300"></canvas>
-                    <div class="mt-8">
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                            <span class="truncate">17 - 30 Years old</span>
-                            <span class="font-medium xl:ml-auto">62%</span>
-                        </div>
-                        <div class="flex items-center mt-4">
-                            <div class="w-2 h-2 bg-pending rounded-full mr-3"></div>
-                            <span class="truncate">31 - 50 Years old</span>
-                            <span class="font-medium xl:ml-auto">33%</span>
-                        </div>
-                        <div class="flex items-center mt-4">
-                            <div class="w-2 h-2 bg-warning rounded-full mr-3"></div>
-                            <span class="truncate">>= 50 Years old</span>
-                            <span class="font-medium xl:ml-auto">10%</span>
-                        </div>
+                    <div class="report-chart">
+                        <canvas id="items-chart" height="169" class="mt-6"></canvas>
                     </div>
                 </div>
             </div>
@@ -394,6 +298,23 @@
             }
         });
 
+        function nFormatter(num, digits) {
+            const lookup = [
+                { value: 1, symbol: "" },
+                { value: 1e3, symbol: "K" },
+                { value: 1e6, symbol: "M" },
+                { value: 1e9, symbol: "G" },
+                { value: 1e12, symbol: "T" },
+                { value: 1e15, symbol: "P" },
+                { value: 1e18, symbol: "E" }
+            ];
+            const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+            var item = lookup.slice().reverse().find(function(item) {
+                return num >= item.value;
+            });
+            return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
+        }
+
         function showModal(selector){
             const el = document.querySelector(selector);
             const modal = tailwind.Modal.getOrCreateInstance(el);
@@ -426,6 +347,148 @@
             range: {
                 'min': [0],
                 'max': [1.6667]
+            }
+        });
+
+        const salesLineChart = document.getElementById('sales-chart').getContext('2d');
+        const itemsLineChart = document.getElementById('items-chart').getContext('2d');
+        const salesChart = new Chart(salesLineChart, {
+            type: 'line',
+            data: {
+                labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                datasets: [{
+                    label: 'Sales',
+                    data: [@foreach($sales as $sale) {{ $sale / 100 }}, @endforeach],
+                    backgroundColor: "transparent",
+                    pointBorderColor: "transparent",
+                    borderColor: 'rgba(52, 83, 183, 1)',
+                    borderWidth: 2
+                },{
+                    label: 'Last Week Sales',
+                    data: [@foreach($lastWeekSales as $lastWeekSale) {{ $lastWeekSale / 100 }}, @endforeach],
+                    borderDash: [2, 2],
+                    borderColor: $("html").hasClass("dark") ? 'rgba(160, 173, 192, 0.6)' : 'rgba(160, 173, 192, 1)',
+                    backgroundColor: "transparent",
+                    pointBorderColor: "transparent",
+                }]
+            },
+            options: {
+                legend: {
+                    display: false,
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            ticks: {
+                                fontSize: "12",
+                                fontColor: 'rgba(160, 173, 192, 1)',
+                            },
+                            gridLines: {
+                                display: false,
+                            },
+                        },
+                    ],
+                    yAxes: [
+                        {
+                            ticks: {
+                                fontSize: "12",
+                                fontColor: 'rgba(160, 173, 192, 1)',
+                                callback:
+                                function callback(
+                                    value,
+                                    index,
+                                    values
+                                ) {
+                                    return (
+                                        "₱" + nFormatter(value, 1)
+                                    );
+                                },
+                            },
+                            gridLines: {
+                                color: $(
+                                    "html"
+                                ).hasClass("dark")
+                                    ? 'rgba(160, 173, 192, 0.3)'
+                                    : 'rgba(160, 173, 192, 1)',
+                                zeroLineColor: $(
+                                    "html"
+                                ).hasClass("dark")
+                                    ? 'rgba(160, 173, 192, 0.3)'
+                                    : 'rgba(160, 173, 192, 1)',
+                                borderDash: [2, 2],
+                                zeroLineBorderDash: [
+                                    2, 2,
+                                ],
+                                drawBorder: false,
+                            },
+                        },
+                    ],
+                }
+            }
+        });
+
+        const itemsChart = new Chart(itemsLineChart, {
+            type: 'line',
+            data: {
+                labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                datasets: [{
+                    label: 'Items',
+                    data: [@foreach($items as $item) {{ $item }}, @endforeach],
+                    backgroundColor: "transparent",
+                    pointBorderColor: "transparent",
+                    borderColor: 'rgba(52, 83, 183, 1)',
+                    borderWidth: 2
+                },{
+                    label: 'Last Week Items',
+                    data: [@foreach($lastWeekItems as $lastWeekItem) {{ $lastWeekItem }}, @endforeach],
+                    borderDash: [2, 2],
+                    borderColor: $("html").hasClass("dark") ? 'rgba(160, 173, 192, 0.6)' : 'rgba(160, 173, 192, 1)',
+                    backgroundColor: "transparent",
+                    pointBorderColor: "transparent",
+                }]
+            },
+            options: {
+                legend: {
+                    display: false,
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            ticks: {
+                                fontSize: "12",
+                                fontColor: 'rgba(160, 173, 192, 1)',
+                            },
+                            gridLines: {
+                                display: false,
+                            },
+                        },
+                    ],
+                    yAxes: [
+                        {
+                            ticks: {
+                                fontSize: "12",
+                                fontColor: 'rgba(160, 173, 192, 1)',
+                            },
+                            gridLines: {
+                                color: $(
+                                    "html"
+                                ).hasClass("dark")
+                                    ? 'rgba(160, 173, 192, 0.3)'
+                                    : 'rgba(160, 173, 192, 1)',
+                                zeroLineColor: $(
+                                    "html"
+                                ).hasClass("dark")
+                                    ? 'rgba(160, 173, 192, 0.3)'
+                                    : 'rgba(160, 173, 192, 1)',
+                                borderDash: [2, 2],
+                                zeroLineBorderDash: [
+                                    2, 2,
+                                ],
+                                drawBorder: false,
+                            },
+                        },
+                    ],
+                }
             }
         });
 

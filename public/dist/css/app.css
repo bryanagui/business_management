@@ -9735,7 +9735,7 @@ html body {
   position: relative;
 }
 .report-chart::before {
-  position: absolute;
+  /* position: absolute; */
   left: 0px;
   top: 0px;
   margin-left: 2.5rem;

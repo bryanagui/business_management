@@ -24,6 +24,8 @@ class CreateUsersTable extends Migration
             $table->date('birthdate');
             $table->string('address');
             $table->string('contact');
+            $table->dateTime('last_login')->nullable();
+            $table->string('ip')->nullable();
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();

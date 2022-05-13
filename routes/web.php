@@ -41,7 +41,6 @@ Route::middleware('auth')->group(function () {
     // BEGIN: DataTables
     Route::group(['prefix' => 'datatables'], function () {
         Route::get('/staff', [DataTablesController::class, 'staff'])->name('datatables.staff');
-        Route::get('/rooms', [DataTablesController::class, 'rooms'])->name('datatables.rooms');
         Route::get('/products', [DataTablesController::class, 'products'])->name('datatables.products');
     });
     // END: DataTables
@@ -57,14 +56,24 @@ Route::middleware('auth')->group(function () {
 
     // BEGIN: GET Requests
     Route::get('/', [PageController::class, 'dashboard'])->name('dashboard');
-    Route::get('reservations', [PageController::class, 'reservations'])->name('reservations');
-    Route::get('rooms', [PageController::class, 'rooms'])->name('rooms');
-    Route::get('guests', [PageController::class, 'guests'])->name('guests');
     Route::get('invoice', [PageController::class, 'invoice'])->name('invoice');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
     // END: GET Requests
 
     // --------------------------------------------------------------------------------------------- //
+
+    Route::group(['prefix' => 'transactions'], function () {
+        Route::get('/', [PageController::class, 'transactions'])->name('transactions');
+        // BEGIN: POS Resource Requests
+        Route::post('store', [PointOfSaleController::class, 'store'])->name('transactions.store'); // CREATE
+        Route::post('edit/{id}', [PointOfSaleController::class, 'edit'])->name('transactions.edit'); // READ
+        Route::post('show/{id}', [PointOfSaleController::class, 'show'])->name('transactions.show'); // READ
+        Route::patch('update/{id}', [PointOfSaleController::class, 'update'])->name('transactions.update'); // UPDATE
+        Route::delete('destroy', [PointOfSaleController::class, 'destroy'])->name('transactions.destroy'); // DELETE
+        Route::patch('restore/{id}', [PointOfSaleController::class, 'restore'])->name('transactions.restore'); // DELETE (Restore)
+        Route::get('create', [PointOfSaleController::class, 'create'])->name('transactions.create');
+        // END: POS Resource Requests
+    });
 
     Route::group(['prefix' => 'point-of-sale'], function () {
         Route::get('/', [PageController::class, 'pointOfSale'])->name('pos');
@@ -108,21 +117,6 @@ Route::middleware('auth')->group(function () {
             Route::patch('restore/{id}', [StaffController::class, 'restore'])->name('staff.restore'); // DELETE (Restore)
         });
         // END: Staff Resource Requests
-
-        // --------------------------------------------------------------------------------------------- //
-
-        // Route: Room Management //
-        // BEGIN: Room Management Resource Requests
-        Route::group(['prefix' => 'room-management'], function () {
-            Route::get('/', [PageController::class, 'roomManagement'])->name('room_management');
-            Route::post('store', [RoomManagementController::class, 'store'])->name('room_management.store'); // CREATE
-            Route::post('edit/{id}', [RoomManagementController::class, 'edit'])->name('room_management.edit'); // READ
-            Route::patch('update/{id}', [RoomManagementController::class, 'update'])->name('room_management.update'); // UPDATE
-            Route::delete('archive/{id}', [RoomManagementController::class, 'archive'])->name('room_management.archive'); // DELETE (Archive)
-            Route::delete('destroy/{id}', [RoomManagementController::class, 'destroy'])->name('room_management.destroy'); // DELETE (Force Delete)
-            Route::patch('restore/{id}', [RoomManagementController::class, 'restore'])->name('room_management.restore'); // DELETE (Restore)
-        });
-        // END: Room Management Resource Requests
 
         // --------------------------------------------------------------------------------------------- //
 

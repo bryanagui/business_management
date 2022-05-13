@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Transaction;
+use App\Models\TransactionHistory;
 use App\Models\User;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -19,7 +23,36 @@ class PageController extends Controller
      */
     public function dashboard()
     {
-        return view('pages/dashboard');
+        $lastWeekPeriod = CarbonPeriod::create(Carbon::now()->startOfWeek()->subWeek(), Carbon::now()->endOfWeek()->subWeek());
+        $period = CarbonPeriod::create(Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek());
+        $dates = [];
+        $sales = [];
+        $items = [];
+        $lastWeekDates = [];
+        $lastWeekSales = [];
+        $lastWeekItems = [];
+        foreach ($period as $date) {
+            array_push($dates, $date);
+        }
+
+        foreach ($lastWeekPeriod as $date) {
+            array_push($lastWeekDates, $date);
+        }
+
+        foreach ($dates as $date) {
+            array_push($sales, Transaction::where('user_id', Auth::user()->id)->whereDate('created_at', $date)->sum('amount'));
+            array_push($items, TransactionHistory::where('user_id', Auth::user()->id)->whereDate('created_at', $date)->sum('quantity'));
+        }
+
+        foreach ($lastWeekPeriod as $date) {
+            array_push($dates, $date);
+        }
+
+        foreach ($lastWeekDates as $date) {
+            array_push($lastWeekSales, Transaction::where('user_id', Auth::user()->id)->whereDate('created_at', $date)->sum('amount'));
+            array_push($lastWeekItems, TransactionHistory::where('user_id', Auth::user()->id)->whereDate('created_at', $date)->sum('quantity'));
+        }
+        return view('pages/dashboard')->with(['dates' => $dates, 'lastWeekDates' => $lastWeekDates, 'sales' => $sales, 'items' => $items, 'lastWeekSales' => $lastWeekSales, 'lastWeekItems' => $lastWeekItems]);
     }
 
     /**
@@ -86,6 +119,18 @@ class PageController extends Controller
     {
         return !Session::has('message') ? abort(404) : view('pages/invoice');
     }
+
+    /**
+     * Show specified view.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function transactions()
+    {
+        return view('pages/transactions');
+    }
+
 
     /**
      * Show specified view.
