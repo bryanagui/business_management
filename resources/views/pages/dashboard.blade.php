@@ -48,7 +48,7 @@
             <!-- BEGIN: Today's Report -->
             <div class="col-span-12 mt-8">
                 <div class="intro-y flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">My Daily Report</h2>
+                    <h2 class="text-lg font-medium truncate mr-5">My Weekly Report</h2>
                 </div>
                 <div class="grid grid-cols-12 gap-6 mt-5">
                     <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
@@ -134,7 +134,7 @@
             <!-- BEGIN: Weekly Top Products -->
             <div class="col-span-12 mt-6">
                 <div class="intro-y block sm:flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">Weekly Top Products</h2>
+                    <h2 class="text-lg font-medium truncate mr-5">Top Products</h2>
                 </div>
                 <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0">
                     <table class="table table-report sm:mt-2" id="weekly-top-products-table">
@@ -142,30 +142,24 @@
                             <tr>
                                 <th class="whitespace-nowrap">IMAGE</th>
                                 <th class="whitespace-nowrap">PRODUCT NAME</th>
-                                <th class="text-center whitespace-nowrap">STOCK</th>
-                                <th class="text-center whitespace-nowrap">STATUS</th>
+                                <th class="text-center whitespace-nowrap">SOLD</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (array_slice($fakers, 0, 10) as $faker)
+                            @foreach (\App\Models\TransactionHistory::with('product')->select(DB::raw('*, SUM(quantity) as total'))->groupBy('transaction_histories.product_id')->orderBy('total', 'DESC')->get() as $product)
                             <tr class="intro-x">
                                 <td class="w-40">
                                     <div class="flex">
                                         <div class="w-10 h-10 image-fit zoom-in">
-                                            <img alt="Rubick Tailwind HTML Admin Template" class="tooltip rounded-full" src="{{ asset('dist/images/' . $faker['images'][0]) }}" title="Uploaded at {{ $faker['dates'][0] }}">
+                                            <img alt="Product Image" class="rounded-md" src="{{ empty($product->product->media) ? asset('storage/static/images') . '/nothumb.jpg' : (file_exists(public_path() . '/storage/static/product_images/' . $product->product->media) ? asset('storage/static/product_images') . '/' . $product->product->media : asset('storage/static/images') . '/nothumb.jpg') }}">
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <a href="" class="font-medium whitespace-nowrap">{{ $faker['products'][0]['name'] }}</a>
-                                    <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $faker['products'][0]['category'] }}</div>
+                                    <a href="" class="font-medium whitespace-nowrap">{{ $product->name }}</a>
+                                    <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $product->category }}</div>
                                 </td>
-                                <td class="text-center">{{ $faker['stocks'][0] }}</td>
-                                <td class="w-40">
-                                    <div class="flex items-center justify-center {{ $faker['true_false'][0] ? 'text-success' : 'text-danger' }}">
-                                        <i data-feather="check-square" class="w-4 h-4 mr-2"></i> {{ $faker['true_false'][0] ? 'Active' : 'Inactive' }}
-                                    </div>
-                                </td>
+                                <td class="text-center">{{ $product->total }}</td>
                             </tr>
                             @endforeach
                         </tbody>
