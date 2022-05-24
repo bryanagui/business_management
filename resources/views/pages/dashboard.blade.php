@@ -156,7 +156,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <a href="" class="font-medium whitespace-nowrap">{{ $product->name }}</a>
+                                    <div class="font-medium whitespace-nowrap">{{ $product->name }}</div>
                                     <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $product->category }}</div>
                                 </td>
                                 <td class="text-center">{{ $product->total }}</td>

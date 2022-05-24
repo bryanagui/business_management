@@ -26,18 +26,18 @@
         <div class="notification-content pt-2 dropdown-menu">
             <div class="notification-content__box dropdown-content">
                 <div class="notification-content__title">Notifications</div>
-                @foreach (array_slice($fakers, 0, 5) as $key => $faker)
-                <div class="cursor-pointer relative flex items-center {{ $key ? 'mt-5' : '' }}">
+                @foreach (\App\Models\Transaction::with(['user'])->limit(10)->get() as $transaction)
+                <div class="cursor-pointer relative flex items-center {{ $transaction->id ? 'mt-5' : '' }}">
                     <div class="w-12 h-12 flex-none image-fit mr-1">
-                        <img alt="Rubick Tailwind HTML Admin Template" class="rounded-full" src="{{ asset('dist/images/' . $faker['photos'][0]) }}">
+                        <img alt="image" class="rounded-full" src="{{ empty($transaction->user->photo) ? asset('storage/static/images') . '/null.jpg' : asset('storage/static/images') . '/' . $transaction->user->photo }}">
                         <div class="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white dark:border-darkmode-600"></div>
                     </div>
                     <div class="ml-2 overflow-hidden">
                         <div class="flex items-center">
-                            <a href="javascript:;" class="font-medium truncate mr-5">{{ $faker['users'][0]['name'] }}</a>
-                            <div class="text-xs text-slate-400 ml-auto whitespace-nowrap">{{ $faker['times'][0] }}</div>
+                            <a href="javascript:;" class="font-medium truncate mr-5">{{ $transaction->user->name }}</a>
+                            <div class="text-xs text-slate-400 ml-auto whitespace-nowrap">{{ $transaction->created_at }}</div>
                         </div>
-                        <div class="w-full truncate text-slate-500 mt-0.5">{{ $faker['news'][0]['short_content'] }}</div>
+                        <div class="w-full truncate text-slate-500 mt-0.5">Transaction Completed: + ₱{{ number_format($transaction->amount / 100, 2) }}</div>
                     </div>
                 </div>
                 @endforeach

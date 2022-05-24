@@ -9761,7 +9761,7 @@ html body {
   }
 }
 .report-chart::after {
-  position: absolute;
+  /* position: absolute; */
   right: 0px;
   top: 0px;
   display: block;
