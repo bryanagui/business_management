@@ -39,6 +39,21 @@ class SideMenu
                 'route_name' => 'inventory',
                 'title' => 'Inventory Management'
             ],
+            'categories' => [
+                'icon' => 'list',
+                'route_name' => 'category',
+                'title' => 'Categories'
+            ],
+            'logs' => [
+                'icon' => 'file-text',
+                'route_name' => 'logs',
+                'title' => 'Logs',
+            ],
+            'transactionHistory' => [
+                'icon' => 'dollar-sign',
+                'route_name' => 'transaction_history',
+                'title' => 'Transaction History'
+            ]
         ];
     }
 }

@@ -48,4 +48,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class, 'user_id', 'id');
     }
+
+    /**
+     * Get all of the transactionHistory for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function transactionHistory(): HasMany
+    {
+        return $this->hasMany(TransactionHistory::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get all of the log for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function log(): HasMany
+    {
+        return $this->hasMany(Log::class, 'user_id', 'id');
+    }
 }

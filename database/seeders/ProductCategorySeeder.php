@@ -14,12 +14,9 @@ class ProductCategorySeeder extends Seeder
      */
     public function run()
     {
-        ProductCategory::create(['name' => 'Room Additionals']);
         ProductCategory::create(['name' => 'K-Pop Albums']);
-        ProductCategory::create(['name' => 'Souvenirs']);
-        ProductCategory::create(['name' => 'Alcoholic Beverages']);
-        ProductCategory::create(['name' => 'Beverages']);
-        ProductCategory::create(['name' => 'Snacks']);
-        ProductCategory::create(['name' => 'Deserts']);
+        ProductCategory::create(['name' => 'Light Sticks']);
+        ProductCategory::create(['name' => 'Photobooks']);
+        ProductCategory::create(['name' => 'Photocards']);
     }
 }

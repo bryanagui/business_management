@@ -6,6 +6,8 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\DarkModeController;
 use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\DataTablesController;
+use App\Http\Controllers\Functions\CategoryController;
+use App\Http\Controllers\Functions\ChangePasswordController;
 use App\Http\Controllers\Functions\ChangePictureController;
 use App\Http\Controllers\Functions\ChangeProductImageController;
 use App\Http\Controllers\Functions\ChangeThumbnailController;
@@ -15,6 +17,7 @@ use App\Http\Controllers\Functions\StaffController;
 use App\Http\Controllers\Functions\RoomManagementController;
 use App\Http\Controllers\Functions\SwitchCategoryController;
 use App\Http\Controllers\Functions\TransactionController;
+use App\Http\Controllers\Functions\TransactionHistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,10 +43,17 @@ Route::middleware('loggedin')->group(function () {
 Route::middleware('auth')->group(function () {
     // BEGIN: DataTables
     Route::group(['prefix' => 'datatables'], function () {
+        Route::get('/', [DataTablesController::class, 'default'])->name('datatables');
         Route::get('/staff', [DataTablesController::class, 'staff'])->name('datatables.staff');
         Route::get('/products', [DataTablesController::class, 'products'])->name('datatables.products');
+        Route::get('/logs', [DataTablesController::class, 'logs'])->name('datatables.logs');
+        Route::get('/transaction-history', [DataTablesController::class, 'transactionHistory'])->name('datatables.transaction_history');
+        Route::get('/transaction-items/{id}', [DataTablesController::class, 'transactionItems'])->name('datatables.transaction_items');
     });
     // END: DataTables
+
+    Route::get('settings', [PageController::class, 'settings'])->name('settings');
+    Route::post('settings/update/password', [ChangePasswordController::class, 'update'])->name('settings.update_password');
 
     // BEGIN: Change Picture Resource Requests
     Route::group(['prefix' => 'image'], function () {
@@ -93,6 +103,23 @@ Route::middleware('auth')->group(function () {
 
 
     Route::middleware('role:Administrator|Twice|Hotel Owner|Manager|Executive')->group(function () {
+        // Route: Categories //
+        // BEGIN: Category Requests
+        Route::group(['prefix' => 'categories'], function () {
+            Route::get('/', [PageController::class, 'category'])->name('category');
+            Route::post('store', [CategoryController::class, 'store'])->name('category.store');
+            Route::delete('destroy/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+        });
+        // END: Category Requests
+
+        // Route: Logs //
+        Route::get('logs', [PageController::class, 'log'])->name('logs');
+
+        // Route: Transaction History //
+        Route::group(['prefix' => 'transaction-history'], function () {
+            Route::get('/', [PageController::class, 'transactionHistory'])->name('transaction_history');
+            Route::post('/show/{id}', [TransactionHistoryController::class, 'show'])->name('transaction_history.show');
+        });
         // Route: Transactions //
         // BEGIN: Transactions Resource Requests
         Route::group(['prefix' => 'transaction'], function () {

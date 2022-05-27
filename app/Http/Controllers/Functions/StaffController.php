@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Functions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStaffRequest;
 use App\Http\Requests\UpdateStaffRequest;
+use App\Models\Log;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -36,6 +37,11 @@ class StaffController extends Controller
             $validated = $request->validated();
             $validated['password'] = Hash::make($request->password);
             User::create($validated)->assignRole('Staff');
+
+            Log::create([
+                'user_id' => Auth::user()->id,
+                'message' => 'Created new user: ' . User::orderBy('created_at', 'DESC')->pluck('name')->first()
+            ]);
 
             return response()->json([
                 'status' => 1,
@@ -70,6 +76,12 @@ class StaffController extends Controller
                     }
                     break;
             }
+
+            Log::create([
+                'user_id' => Auth::user()->id,
+                'message' => 'Viewed user with id ' . $id . ': ' . User::orderBy('created_at', 'DESC')->pluck('name')->first()
+            ]);
+
 
             return response()->json([
                 'status' => 1,

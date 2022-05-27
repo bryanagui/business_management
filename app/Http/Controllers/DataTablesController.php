@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\Product;
 use App\Models\Room;
+use App\Models\Transaction;
+use App\Models\TransactionHistory;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -12,6 +15,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DataTablesController extends Controller
 {
+
+    public function default()
+    {
+        return abort(404);
+    }
+
     /**
      * Display Datatable
      *
@@ -176,6 +185,145 @@ class DataTablesController extends Controller
                     return collect($buttons)->implode(' ');
                 })
                 ->rawColumns(['actions', 'photo', 'status'])
+                ->make(true);
+        }
+        return abort(404);
+    }
+
+    public function logs()
+    {
+        if (request()->ajax()) {
+            $logs = Log::with(['user'])->orderBy('created_at', 'DESC')->get();
+            return DataTables::of($logs)
+                ->addColumn('photo', function ($row) {
+                    $source = null;
+                    $gender = null;
+                    switch (empty($row->user->photo)) {
+                        case true:
+                            $source = asset('storage/static/images') . '/null.jpg';
+                            break;
+                        case false:
+                            file_exists(public_path() . '/storage/static/images/' . $row->user->photo) ? $source = asset('storage/static/images') . '/' . $row->user->photo : $source = asset('storage/static/images') . '/null.jpg';
+                            break;
+                    }
+                    switch ($row->user->gender) {
+                        case 'female':
+                            $gender = ' image-female';
+                            break;
+                        case 'male':
+                            $gender = ' image-male';
+                            break;
+                        default:
+                            $gender = null;
+                            break;
+                    }
+
+                    return "<div class='flex'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-full" . $gender . "' src='" . $source . "'></div></div>";
+                })
+                ->addColumn('name', function ($row) {
+                    return $row->user->name;
+                })
+                ->addColumn('date', function ($row) {
+                    return (new Carbon($row->created_at))->format("F d, Y h:i:sa");
+                })
+                ->rawColumns(['photo'])
+                ->make(true);
+        }
+        return abort(404);
+    }
+
+    public function transactionHistory()
+    {
+        if (request()->ajax()) {
+            $transactions = Transaction::with(['user'])->orderBy('created_at', 'DESC')->get();
+            return DataTables::of($transactions)
+                ->addColumn('photo', function ($row) {
+                    $source = null;
+                    $gender = null;
+                    switch (empty($row->user->photo)) {
+                        case true:
+                            $source = asset('storage/static/images') . '/null.jpg';
+                            break;
+                        case false:
+                            file_exists(public_path() . '/storage/static/images/' . $row->user->photo) ? $source = asset('storage/static/images') . '/' . $row->user->photo : $source = asset('storage/static/images') . '/null.jpg';
+                            break;
+                    }
+                    switch ($row->user->gender) {
+                        case 'female':
+                            $gender = ' image-female';
+                            break;
+                        case 'male':
+                            $gender = ' image-male';
+                            break;
+                        default:
+                            $gender = null;
+                            break;
+                    }
+
+                    return "<div class='flex'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-full" . $gender . "' src='" . $source . "'></div></div>";
+                })
+                ->addColumn('name', function ($row) {
+                    return $row->user->name;
+                })
+                ->addColumn('subtotal', function ($row) {
+                    return "₱" . number_format($row->amount / 100, 2);
+                })
+                ->addColumn('payment', function ($row) {
+                    return "₱" . number_format($row->payment / 100, 2);
+                })
+                ->addColumn('change', function ($row) {
+                    return "₱" . number_format($row->change / 100, 2);
+                })
+                ->addColumn('date', function ($row) {
+                    return (new Carbon($row->created_at))->format("F d, Y h:i:sa");
+                })
+                ->addColumn('actions', function ($row) {
+                    $buttons = [];
+                    array_push($buttons, "<div class='flex justify-center items-center'><a href='javascript:;' class='flex items-center mr-3' id='view' data-transaction-id='" . $row->transaction_id . "'><i class='fa-regular fa-eye w-4 h-4 mr-1'></i> View Transaction</a></div>");
+                    return collect($buttons)->implode(' ');
+                })
+                ->rawColumns(['photo', 'actions'])
+                ->make(true);
+        }
+        return abort(404);
+    }
+
+    public function transactionItems($id)
+    {
+        if (request()->ajax()) {
+            $items = TransactionHistory::where('transaction_id', $id);
+            return DataTables::of($items)
+                ->addColumn('photo', function ($row) {
+                    $source = null;
+                    $gender = null;
+                    switch (empty($row->user->photo)) {
+                        case true:
+                            $source = asset('storage/static/images') . '/null.jpg';
+                            break;
+                        case false:
+                            file_exists(public_path() . '/storage/static/images/' . $row->user->photo) ? $source = asset('storage/static/images') . '/' . $row->user->photo : $source = asset('storage/static/images') . '/null.jpg';
+                            break;
+                    }
+                    switch ($row->user->gender) {
+                        case 'female':
+                            $gender = ' image-female';
+                            break;
+                        case 'male':
+                            $gender = ' image-male';
+                            break;
+                        default:
+                            $gender = null;
+                            break;
+                    }
+                    return "<div class='flex'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-full" . $gender . "' src='" . $source . "'></div></div>";
+                })
+                ->addColumn('price', function ($row) {
+                    return "₱" . number_format($row->price / 100, 2);
+                })
+                ->addColumn('total', function ($row) {
+                    return "₱" . number_format($row->amount / 100, 2);
+                })
+                ->rawColumns(['photo'])
                 ->make(true);
         }
         return abort(404);

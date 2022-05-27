@@ -7,7 +7,9 @@ use App\Http\Requests\PosPaymentRequest;
 use App\Http\Requests\StorePosRequest;
 use App\Http\Requests\UpdatePosCartRequest;
 use App\Models\Cart;
+use App\Models\Log;
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

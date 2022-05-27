@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Request\LoginRequest;
 use App\Http\Controllers\Controller;
+use App\Models\Log;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -36,6 +37,10 @@ class AuthController extends Controller
         ])) {
             throw new \Exception('Wrong email or password.');
         }
+        Log::create([
+            'user_id' => Auth::user()->id,
+            'message' => 'Logged in',
+        ]);
         User::where('id', Auth::user()->id)->update(['last_login' => date('Y-m-d H:i:s'), 'ip' => request()->ip()]);
     }
 

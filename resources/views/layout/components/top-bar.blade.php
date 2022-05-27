@@ -12,10 +12,6 @@
     <span class="font-medium whitespace-nowrap mr-6 ml-6" id="topbar-datetime-running"></span>
     <!-- END: DateTime Now -->
     <!-- BEGIN: Dark Mode Switcher-->
-    {{-- <div data-url="{{ route('dark-mode-switcher') }}" class="dark-mode-switcher cursor-pointer shadow-md box border rounded-full w-24 h-12 flex items-center justify-center mr-6">
-        <div class="mr-2 text-slate-600 dark:text-slate-200"></div>
-        <div class="dark-mode-switcher__toggle {{ $dark_mode ? 'dark-mode-switcher__toggle--active' : '' }} border"></div>
-    </div> --}}
     <a type="button" href="{{ route('dark-mode-switcher') }}" class="rounded-full btn {{ $dark_mode ? 'btn-primary' : 'btn-dark' }} mr-6">{!! $dark_mode ? '<i class="fa-regular fa-sun"></i>' : '<i class="fa-regular fa-moon"></i>' !!}</a>
     <!-- END: Dark Mode Switcher-->
     <!-- BEGIN: Notifications -->
@@ -60,7 +56,7 @@
                     <hr class="dropdown-divider border-white/[0.08]">
                 </li>
                 <li>
-                    <a href="javascript:;" class="dropdown-item hover:bg-white/5">
+                    <a href="{{ route('settings') }}" class="dropdown-item hover:bg-white/5">
                         <i data-feather="settings" class="w-4 h-4 mr-2"></i> Account Settings
                     </a>
                 </li>

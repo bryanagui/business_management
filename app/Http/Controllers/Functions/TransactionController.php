@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Functions;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Log;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\TransactionHistory;
@@ -85,6 +86,11 @@ class TransactionController extends Controller
             'amount' => $cart->sum('amount'),
             'payment' => $cart->pluck('payment')->first(),
             'change' => $cart->pluck('payment')->first() - $cart->sum('amount'),
+        ]);
+
+        Log::create([
+            'user_id' => Auth::user()->id,
+            'message' => 'Transaction completed: Amount gained +₱' . number_format(Transaction::orderBy('created_at', 'DESC')->pluck('amount')->first() / 100, 2),
         ]);
 
         return redirect(route('invoice'))->with([

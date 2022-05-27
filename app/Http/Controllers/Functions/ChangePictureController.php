@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Functions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePhotoRequest;
 use App\Models\ImageUpload;
+use App\Models\Log;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,11 @@ class ChangePictureController extends Controller
             ImageUpload::create([
                 'user_id' => Auth::user()->id,
                 'media' => $filename
+            ]);
+
+            Log::create([
+                'user_id' => Auth::user()->id,
+                'message' => 'Changed profile picture',
             ]);
 
             return response()->json([
@@ -80,6 +86,7 @@ class ChangePictureController extends Controller
             ]);
 
             $user = User::where('id', Auth::user()->id)->get();
+
             return response()->json([
                 'status' => 1,
                 'message' => 'Updated profile picture successfully.',

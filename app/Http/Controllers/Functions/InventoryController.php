@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Functions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Log;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class InventoryController extends Controller
@@ -35,6 +37,11 @@ class InventoryController extends Controller
 
             Product::create($validated);
 
+            Log::create([
+                'user_id' => Auth::user()->id,
+                'message' => 'Added product: ' . Product::orderBy('created_at', 'DESC')->pluck('name')->first(),
+            ]);
+
             return response()->json([
                 'status' => 1,
                 'title' => 'Operation successful!',
@@ -42,17 +49,6 @@ class InventoryController extends Controller
             ]);
         }
         return abort(404);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -111,6 +107,11 @@ class InventoryController extends Controller
 
             Product::withTrashed()->where('id', $id)->update($validated);
 
+            Log::create([
+                'user_id' => Auth::user()->id,
+                'message' => 'Updated product information with ID ' . $id . ': ' . Product::where('id', $id)->pluck('name')->first(),
+            ]);
+
             return response()->json([
                 'status' => 1,
                 'title' => 'Operation successful',
@@ -132,6 +133,11 @@ class InventoryController extends Controller
             try {
                 $product = Product::withTrashed()->where('id', $id)->first();
                 if (request()->isMethod('delete')) {
+                    Log::create([
+                        'user_id' => Auth::user()->id,
+                        'message' => 'Permanently deleted product with ID ' . $id . ': ' . Product::where('id', $id)->pluck('name')->first(),
+                    ]);
+
                     Product::withTrashed()->where('id', $id)->forceDelete();
 
                     return response()->json([
@@ -170,6 +176,11 @@ class InventoryController extends Controller
                 if (request()->isMethod('delete')) {
                     Product::where('id', $id)->delete();
 
+                    Log::create([
+                        'user_id' => Auth::user()->id,
+                        'message' => 'Deactivated product with ID ' . $id . ': ' . Product::withTrashed()->where('id', $id)->pluck('name')->first(),
+                    ]);
+
                     return response()->json([
                         'status' => 1,
                         'title' => 'Operation successful',
@@ -205,6 +216,11 @@ class InventoryController extends Controller
                 $product = Product::withTrashed()->where('id', $id)->first();
                 if (request()->isMethod('patch')) {
                     Product::where('id', $id)->restore();
+
+                    Log::create([
+                        'user_id' => Auth::user()->id,
+                        'message' => 'Reactivated product with ID ' . $id . ': ' . Product::withTrashed()->where('id', $id)->pluck('name')->first(),
+                    ]);
 
                     return response()->json([
                         'status' => 1,
