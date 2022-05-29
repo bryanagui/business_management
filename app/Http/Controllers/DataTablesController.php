@@ -328,4 +328,53 @@ class DataTablesController extends Controller
         }
         return abort(404);
     }
+
+    public function refundItems($id)
+    {
+        if (request()->ajax()) {
+            $items = TransactionHistory::where('transaction_id', $id);
+            return DataTables::of($items)
+                ->addColumn('photo', function ($row) {
+                    $source = null;
+                    $gender = null;
+                    switch (empty($row->user->photo)) {
+                        case true:
+                            $source = asset('storage/static/images') . '/null.jpg';
+                            break;
+                        case false:
+                            file_exists(public_path() . '/storage/static/images/' . $row->user->photo) ? $source = asset('storage/static/images') . '/' . $row->user->photo : $source = asset('storage/static/images') . '/null.jpg';
+                            break;
+                    }
+                    switch ($row->user->gender) {
+                        case 'female':
+                            $gender = ' image-female';
+                            break;
+                        case 'male':
+                            $gender = ' image-male';
+                            break;
+                        default:
+                            $gender = null;
+                            break;
+                    }
+                    return "<div class='flex'><div class='w-10 h-10 image-fit zoom-in'><img alt='Picture' class='rounded-full" . $gender . "' src='" . $source . "'></div></div>";
+                })
+                ->addColumn('price', function ($row) {
+                    return "₱" . number_format($row->price / 100, 2);
+                })
+                ->addColumn('total', function ($row) {
+                    return "₱" . number_format($row->amount / 100, 2);
+                })
+                ->addColumn('date', function ($row) {
+                    return (new Carbon($row->created_at))->format('F d, Y h:i a');
+                })
+                ->addColumn('actions', function ($row) {
+                    $buttons = [];
+                    array_push($buttons, "<div class='flex justify-center items-center'><a href='javascript:;' class='flex items-center mr-3 text-danger' id='return' data-id='" . $row->id . "'><i class='fa-solid fa-arrow-rotate-left w-4 h-4 mr-1'></i> Return</a></div>");
+                    return collect($buttons)->implode(' ');
+                })
+                ->rawColumns(['photo', 'actions'])
+                ->make(true);
+        }
+        return abort(404);
+    }
 }

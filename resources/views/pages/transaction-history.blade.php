@@ -21,6 +21,7 @@
                             <th class="whitespace-nowrap">NO.</th>
                             <th class="whitespace-nowrap">PHOTO</th>
                             <th class="whitespace-nowrap">TRANSACTION ID</th>
+                            <th class="whitespace-nowrap">TYPE</th>
                             <th class="whitespace-nowrap">TRANSACTION BY</th>
                             <th class="whitespace-nowrap">SUBTOTAL</th>
                             <th class="whitespace-nowrap">PAYMENT</th>
@@ -59,6 +60,7 @@
                                         <th class="whitespace-nowrap">PRICE</th>
                                         <th class="whitespace-nowrap">QTY</th>
                                         <th class="whitespace-nowrap">TOTAL</th>
+                                        <th class="whitespace-nowrap">REFUNDED</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -125,6 +127,7 @@
                 {data: "id", name: "id"},
                 {data: "photo", name: "photo"},
                 {data: "transaction_id", name: "transaction_id"},
+                {data: "type", name: "type"},
                 {data: "name", name: "name"},
                 {data: "subtotal", name: "subtotal"},
                 {data: "payment", name: "payment"},
@@ -174,6 +177,7 @@
                     {data: "price", name: "price"},
                     {data: "quantity", name: "quantity"},
                     {data: "total", name: "total"},
+                    {data: "refunded", name: "refunded"},
                 ],
 
                 columnDefs: [
@@ -182,7 +186,7 @@
                         className: "text-center",
                     },
                     {
-                        targets: [2, 3, 4],
+                        targets: [2, 3, 4, 5],
                         className: "text-center"
                     },
                 ]

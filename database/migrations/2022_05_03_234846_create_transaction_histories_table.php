@@ -20,10 +20,11 @@ class CreateTransactionHistoriesTable extends Migration
             $table->integer('product_id');
             $table->longText('name');
             $table->string('category');
-            $table->integer('discount')->nullable();
-            $table->integer('price');
-            $table->integer('quantity');
-            $table->integer('amount');
+            $table->bigInteger('discount')->nullable();
+            $table->bigInteger('price');
+            $table->bigInteger('quantity');
+            $table->bigInteger('amount');
+            $table->bigInteger('refunded')->default(0);
             $table->timestamps();
         });
     }

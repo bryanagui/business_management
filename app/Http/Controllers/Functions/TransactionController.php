@@ -42,7 +42,7 @@ class TransactionController extends Controller
     public function store()
     {
         $cart = Cart::where('user_id', Auth::user()->id);
-        $id = time() * 2;
+        $id = (time() + rand(1000, 9999)) * rand(2, 4);
 
         if (Cart::where('user_id', Auth::user()->id)->get()->isEmpty()) {
             return redirect()->back()->with([
@@ -83,6 +83,7 @@ class TransactionController extends Controller
         Transaction::create([
             'user_id' => Auth::user()->id,
             'transaction_id' => $id,
+            'type' => "Sale",
             'amount' => $cart->sum('amount'),
             'payment' => $cart->pluck('payment')->first(),
             'change' => $cart->pluck('payment')->first() - $cart->sum('amount'),

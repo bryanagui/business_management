@@ -24,10 +24,10 @@ class SideMenu
                 'title' => 'Point of Sale',
             ],
 
-            'transactions' => [
-                'icon' => 'clipboard',
-                'route_name' => 'transactions',
-                'title' => 'Transactions'
+            'refund' => [
+                'icon' => 'rewind',
+                'route_name' => 'refund',
+                'title' => 'Return/Refund'
             ],
             'users' => [
                 'icon' => 'users',

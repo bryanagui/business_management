@@ -6,6 +6,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\DarkModeController;
 use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\DataTablesController;
+use App\Http\Controllers\Functions\RefundController;
 use App\Http\Controllers\Functions\CategoryController;
 use App\Http\Controllers\Functions\ChangePasswordController;
 use App\Http\Controllers\Functions\ChangePictureController;
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/logs', [DataTablesController::class, 'logs'])->name('datatables.logs');
         Route::get('/transaction-history', [DataTablesController::class, 'transactionHistory'])->name('datatables.transaction_history');
         Route::get('/transaction-items/{id}', [DataTablesController::class, 'transactionItems'])->name('datatables.transaction_items');
+        Route::get('/refund-items/{id}', [DataTablesController::class, 'refundItems'])->name('datatables.refund_items');
     });
     // END: DataTables
 
@@ -72,17 +74,10 @@ Route::middleware('auth')->group(function () {
 
     // --------------------------------------------------------------------------------------------- //
 
-    Route::group(['prefix' => 'transactions'], function () {
-        Route::get('/', [PageController::class, 'transactions'])->name('transactions');
-        // BEGIN: POS Resource Requests
-        Route::post('store', [PointOfSaleController::class, 'store'])->name('transactions.store'); // CREATE
-        Route::post('edit/{id}', [PointOfSaleController::class, 'edit'])->name('transactions.edit'); // READ
-        Route::post('show/{id}', [PointOfSaleController::class, 'show'])->name('transactions.show'); // READ
-        Route::patch('update/{id}', [PointOfSaleController::class, 'update'])->name('transactions.update'); // UPDATE
-        Route::delete('destroy', [PointOfSaleController::class, 'destroy'])->name('transactions.destroy'); // DELETE
-        Route::patch('restore/{id}', [PointOfSaleController::class, 'restore'])->name('transactions.restore'); // DELETE (Restore)
-        Route::get('create', [PointOfSaleController::class, 'create'])->name('transactions.create');
-        // END: POS Resource Requests
+    Route::group(['prefix' => 'refund'], function () {
+        Route::get('/', [PageController::class, 'refund'])->name('refund');
+        Route::post('/show', [RefundController::class, 'show'])->name('refund.show');
+        Route::post('/store', [RefundController::class, 'store'])->name('refund.store');
     });
 
     Route::group(['prefix' => 'point-of-sale'], function () {
