@@ -332,7 +332,7 @@ class DataTablesController extends Controller
     public function refundItems($id)
     {
         if (request()->ajax()) {
-            $items = TransactionHistory::where('transaction_id', $id);
+            $items = TransactionHistory::where('transaction_id', $id)->get();
             return DataTables::of($items)
                 ->addColumn('photo', function ($row) {
                     $source = null;

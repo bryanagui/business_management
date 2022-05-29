@@ -67,18 +67,16 @@
                     @csrf
                     <div class="mb-4">
                         <label for="transaction_id" class="form-label">Transaction ID</label>
-                        <input id="transaction_id" type="text" class="form-control" placeholder="Juan S. Dela Cruz">
-                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
+                        <input id="transaction_id" readonly="readonly" type="text" class="form-control">
                     </div>
                     <div class="mb-4">
                         <label for="name" class="form-label">Product Name</label>
-                        <input id="name" type="text" class="form-control" placeholder="Juan S. Dela Cruz">
-                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
+                        <input id="name" readonly="readonly" type="text" class="form-control">
                     </div>
                     <div class="mb-4">
                         <label for="quantity" class="form-label">Quantity to Return</label>
-                        <input id="quantity" type="number" class="form-control" name="quantity" placeholder="Juan S. Dela Cruz">
-                        <span class="validation-error error-name {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
+                        <input id="quantity" type="number" class="form-control" name="quantity">
+                        <span class="validation-error error-quantity {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
                     <button type="submit" class="btn btn-primary w-full mr-1 mb-2 mt-4">Submit</button>
                 </form>
@@ -237,7 +235,7 @@
                             showSlideover("#return-modal");
                             $("#transaction_id").val(response.data.transaction_id);
                             $("#name").val(response.data.name);
-                            $("#quantity").val(response.data.quantity);
+                            $("#quantity").val(response.data.quantity - response.data.refunded);
 
                             $("#return-form").submit(function (e) {
                                 e.preventDefault();
@@ -251,6 +249,15 @@
                                         clearForm("#return-form");
                                         hideSlideover("#return-modal");
                                         showSuccessNotification("Operation successful!", "Return/refund successfully processed.")
+                                    },
+                                    error: function (xhr) {
+                                        if(xhr.status == 422){
+                                            var errors = xhr.responseJSON.errors;
+                                            $('#return-form').find('span.validation-error').text('');
+                                            $.each(errors, function (s, v) {
+                                                $('#return-form').find('span.error-'+s).text(v[0]);
+                                            });
+                                        }
                                     }
                                 });
                             });

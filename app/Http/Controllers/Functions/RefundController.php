@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Functions;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RefundRequest;
 use App\Models\Log;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -38,12 +39,12 @@ class RefundController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RefundRequest $request)
     {
         $id = (time() + rand(1000, 9999)) * rand(2, 4);
         $item = TransactionHistory::where('id', $request->id)->where('transaction_id', $request->tid)->first();
         TransactionHistory::where('id', $request->id)->where('transaction_id', $request->tid)->update([
-            'refunded' => $request->quantity
+            'refunded' => $item->refunded + $request->quantity
         ]);
 
         TransactionHistory::create([
@@ -74,6 +75,11 @@ class RefundController extends Controller
         Log::create([
             'user_id' => Auth::user()->id,
             'message' => 'Refund process completed for Transaction ID ' . $item->transaction_id . ' and Item ID ' . $item->product_id
+        ]);
+
+        return response()->json([
+            'status' => 1,
+            'message' => 'Refund processed.'
         ]);
     }
 
