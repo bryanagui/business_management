@@ -40,7 +40,7 @@
 @endsection
 
 @section('modal')
-<!-- BEGIN: Warning Upload Modal -->
+<!-- BEGIN: Warning Modal -->
 <div id="confirm-return-action-modal" class="modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -54,7 +54,22 @@
         </div>
     </div>
 </div>
-<!-- END: Warning Upload Modal -->
+<!-- END: Warning Modal -->
+<!-- BEGIN: Warning #2 Modal -->
+<div id="confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center"> <i data-feather="alert-circle" class="w-16 h-16 {{ $dark_mode ? 'text-warning' : 'text-danger' }} mx-auto mt-3"></i>
+                    <div class="text-3xl mt-5">Warning!</div>
+                    <div class="text-slate-500 mt-2">To confirm this action, please type "CONFIRM" below.<br><input type="text" class="form-control text-center w-56 mt-4 confirmation"></div>
+                </div>
+                <div class="px-5 pb-8 text-center"><button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button> <button type="button" id="confirmation-btn" disabled class="btn {{ $dark_mode ? 'btn-warning' : 'btn-danger' }} w-24">Confirm</button> </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Warning #2 Modal -->
 <!-- BEGIN: Create New Staff Modal -->
 <div id="return-modal" class="modal modal-slide-over" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -78,8 +93,8 @@
                         <input id="quantity" type="number" class="form-control" name="quantity">
                         <span class="validation-error error-quantity {{ $dark_mode ? 'text-warning' : 'text-danger' }} "></span>
                     </div>
-                    <button type="submit" class="btn btn-primary w-full mr-1 mb-2 mt-4">Submit</button>
                 </form>
+                <button type="button" class="btn btn-primary w-full mr-1 mb-2 mt-4" id="submit-return">Submit</button>
             </div>
         </div>
     </div>
@@ -174,12 +189,21 @@
             $("#success-notification-content").text(content);
         }
 
+        $(".confirmation").on("change keyup paste", function(){
+            if($(".confirmation").val() == "CONFIRM") {
+                $("#confirmation-btn").removeAttr("disabled");
+            }
+            else {
+                $("#confirmation-btn").attr("disabled", true);
+            }
+        });
+
         $("#search-transaction").click(function (e) {
             e.preventDefault();
             const tid = $("#transaction-id").val();
             const id = $("#transaction-id").val() == "" ? 0 : $("#transaction-id").val();
 
-            $('table').DataTable().destroy();
+            $.fn.DataTable.isDataTable("table") ? $('table').DataTable().destroy() : null;
             var table = $("table").DataTable({
                 processing: true,
                 ordering: false,
@@ -235,29 +259,34 @@
                                 $("#name").val(response.data.name);
                                 $("#quantity").val(response.data.quantity - response.data.refunded);
 
-                                $("#return-form").submit(function (e) {
+                                $("#submit-return").off().click(function (e) {
                                     e.preventDefault();
                                     const quantity = $("#quantity").val();
-                                    $.ajax({
-                                        type: "POST",
-                                        url: "{{ route('refund.store') }}",
-                                        data: {id: pid, tid: tid, quantity: quantity},
-                                        dataType: "json",
-                                        success: function (response) {
-                                            clearForm("#return-form");
-                                            hideSlideover("#return-modal");
-                                            showSuccessNotification("Operation successful!", "Return/refund successfully processed.");
-                                            table.ajax.reload();
-                                        },
-                                        error: function (xhr) {
-                                            if(xhr.status == 422){
-                                                var errors = xhr.responseJSON.errors;
-                                                $('#return-form').find('span.validation-error').text('');
-                                                $.each(errors, function (s, v) {
-                                                    $('#return-form').find('span.error-'+s).text(v[0]);
-                                                });
+                                    showModal("#confirmation-modal");
+                                    $("#confirmation-btn").off().click(function (e) {
+                                        e.preventDefault();
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "{{ route('refund.store') }}",
+                                            data: {id: pid, tid: tid, quantity: quantity},
+                                            dataType: "json",
+                                            success: function (response) {
+                                                clearForm("#return-form");
+                                                hideSlideover("#return-modal");
+                                                showSuccessNotification("Operation successful!", "Return/refund successfully processed.");
+                                                hideModal("#confirmation-modal");
+                                                table.ajax.reload();
+                                            },
+                                            error: function (xhr) {
+                                                if(xhr.status == 422){
+                                                    var errors = xhr.responseJSON.errors;
+                                                    $('#return-form').find('span.validation-error').text('');
+                                                    $.each(errors, function (s, v) {
+                                                        $('#return-form').find('span.error-'+s).text(v[0]);
+                                                    });
+                                                }
                                             }
-                                        }
+                                        });
                                     });
                                 });
                             }
