@@ -185,10 +185,10 @@
                                     <img alt="Profile Picture" src="{{ asset('storage/static/images' . '/' . $transaction->user->photo) }}">
                                 </div>
                                 <div class="ml-4 mr-auto">
-                                    <div class="font-medium">{{ $transaction->user->name }}</div>
+                                    <div class="font-medium truncate">{{ $transaction->user->name }}</div>
                                     <div class="text-slate-500 text-xs mt-0.5">{{ (new Carbon\Carbon($transaction->created_at))->format('F d, Y h:i:sa') }}</div>
                                 </div>
-                                <div class="text-success">+ ₱{{ number_format($transaction->amount / 100, 2) }}</div>
+                                <div class="{{ $transaction->amount < 0 ? 'text-danger' : 'text-success' }}">{{ $transaction->amount < 0 ? "- ₱" . number_format(abs($transaction->amount / 100), 2) : "+ ₱" . number_format($transaction->amount / 100, 2) }}</div>
                             </div>
                         </div>
                         @endforeach

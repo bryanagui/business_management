@@ -13,7 +13,7 @@
             <input type="text" class="form-control w-72 mr-4" id="transaction-id" placeholder="Transaction ID">
             <button class="btn btn-primary shadow-md mr-2" id="search-transaction">Search Transaction</button>
         </div>
-        <div class="col-span-12 mt-6">
+        <div class="col-span-12 mt-6" id="refund-content">
             <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0">
                 <table class="table table-report sm:mt-2" id="refund-table">
                     <thead>
@@ -176,9 +176,10 @@
 
         $("#search-transaction").click(function (e) {
             e.preventDefault();
-
+            const tid = $("#transaction-id").val();
             const id = $("#transaction-id").val() == "" ? 0 : $("#transaction-id").val();
 
+            $('table').DataTable().destroy();
             var table = $("table").DataTable({
                 processing: true,
                 ordering: false,
@@ -210,62 +211,61 @@
                         className: "table-report__action",
                     },
                     {
-                        targets: [0, 1, 2, 3, 4, 5, 6],
+                        targets: [0, 1, 2, 3, 4, 5, 6, 7],
                         className: "text-center",
                     },
                 ]
             });
-            table.destroy();
-        });
 
-        $("#refund-table").on("click", "#return", function () {
-            const id = $(this).data('id');
-            const tid = $("#transaction-id").val();
-            showModal("#confirm-return-action-modal");
+            $("#refund-table").on("click", "#return", function () {
+                const pid = $(this).data('id');
+                showModal("#confirm-return-action-modal");
 
-            $("#confirm-return-click").off().click(function (e) {
-                e.preventDefault();
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('refund.show') }}",
-                    data: { id: id, tid: tid },
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.status == 1){
-                            showSlideover("#return-modal");
-                            $("#transaction_id").val(response.data.transaction_id);
-                            $("#name").val(response.data.name);
-                            $("#quantity").val(response.data.quantity - response.data.refunded);
+                $("#confirm-return-click").off().click(function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('refund.show') }}",
+                        data: { id: pid, tid: tid },
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.status == 1){
+                                showSlideover("#return-modal");
+                                $("#transaction_id").val(response.data.transaction_id);
+                                $("#name").val(response.data.name);
+                                $("#quantity").val(response.data.quantity - response.data.refunded);
 
-                            $("#return-form").submit(function (e) {
-                                e.preventDefault();
-                                const quantity = $("#quantity").val();
-                                $.ajax({
-                                    type: "POST",
-                                    url: "{{ route('refund.store') }}",
-                                    data: {id: id, tid: tid, quantity: quantity},
-                                    dataType: "json",
-                                    success: function (response) {
-                                        clearForm("#return-form");
-                                        hideSlideover("#return-modal");
-                                        showSuccessNotification("Operation successful!", "Return/refund successfully processed.")
-                                    },
-                                    error: function (xhr) {
-                                        if(xhr.status == 422){
-                                            var errors = xhr.responseJSON.errors;
-                                            $('#return-form').find('span.validation-error').text('');
-                                            $.each(errors, function (s, v) {
-                                                $('#return-form').find('span.error-'+s).text(v[0]);
-                                            });
+                                $("#return-form").submit(function (e) {
+                                    e.preventDefault();
+                                    const quantity = $("#quantity").val();
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "{{ route('refund.store') }}",
+                                        data: {id: pid, tid: tid, quantity: quantity},
+                                        dataType: "json",
+                                        success: function (response) {
+                                            clearForm("#return-form");
+                                            hideSlideover("#return-modal");
+                                            showSuccessNotification("Operation successful!", "Return/refund successfully processed.");
+                                            table.ajax.reload();
+                                        },
+                                        error: function (xhr) {
+                                            if(xhr.status == 422){
+                                                var errors = xhr.responseJSON.errors;
+                                                $('#return-form').find('span.validation-error').text('');
+                                                $.each(errors, function (s, v) {
+                                                    $('#return-form').find('span.error-'+s).text(v[0]);
+                                                });
+                                            }
                                         }
-                                    }
+                                    });
                                 });
-                            });
+                            }
+                            else {
+                                showDangerNotification("Operation failed!", response.message);
+                            }
                         }
-                        else {
-                            showDangerNotification("Operation failed!", response.message);
-                        }
-                    }
+                    });
                 });
             });
         });
