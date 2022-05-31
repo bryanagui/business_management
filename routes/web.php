@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/transaction-history', [DataTablesController::class, 'transactionHistory'])->name('datatables.transaction_history');
         Route::get('/transaction-items/{id}', [DataTablesController::class, 'transactionItems'])->name('datatables.transaction_items');
         Route::get('/refund-items/{id}', [DataTablesController::class, 'refundItems'])->name('datatables.refund_items');
+        Route::get('/categories', [DataTablesController::class, 'categories'])->name('datatables.categories');
     });
     // END: DataTables
 
@@ -97,7 +98,12 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    Route::middleware('role:Administrator|Twice|Hotel Owner|Manager|Executive')->group(function () {
+    Route::middleware('role:Administrator|Twice|Super Manager')->group(function () {
+        // Route: Logs //
+        Route::get('logs', [PageController::class, 'log'])->name('logs');
+    });
+
+    Route::middleware('role:Administrator|Twice|Super Manager|Manager')->group(function () {
         // Route: Categories //
         // BEGIN: Category Requests
         Route::group(['prefix' => 'categories'], function () {
@@ -106,9 +112,6 @@ Route::middleware('auth')->group(function () {
             Route::delete('destroy/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
         });
         // END: Category Requests
-
-        // Route: Logs //
-        Route::get('logs', [PageController::class, 'log'])->name('logs');
 
         // Route: Transaction History //
         Route::group(['prefix' => 'transaction-history'], function () {

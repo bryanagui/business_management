@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Log;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\Room;
 use App\Models\Transaction;
 use App\Models\TransactionHistory;
@@ -373,6 +374,25 @@ class DataTablesController extends Controller
                     return collect($buttons)->implode(' ');
                 })
                 ->rawColumns(['photo', 'actions'])
+                ->make(true);
+        }
+        return abort(404);
+    }
+
+    public function categories()
+    {
+        if (request()->ajax()) {
+            $categories = ProductCategory::all();
+            return DataTables::of($categories)->addIndexColumn()
+                ->addColumn('date', function ($row) {
+                    return (new Carbon($row->created_at))->format('F d, Y h:ia');
+                })
+                ->addColumn('actions', function ($row) {
+                    $buttons = [];
+                    array_push($buttons, "<div class='flex justify-center items-center'><a href='javascript:;' class='flex items-center mr-3 text-danger' id='delete' data-id='" . $row->id . "'><i class='fa-solid fa-x w-4 h-4 mr-1'></i> Discard</a></div>");
+                    return collect($buttons)->implode(' ');
+                })
+                ->rawColumns(['actions'])
                 ->make(true);
         }
         return abort(404);

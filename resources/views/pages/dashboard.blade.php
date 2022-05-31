@@ -182,7 +182,7 @@
                         <div class="intro-x">
                             <div class="box px-5 py-3 mb-3 flex items-center zoom-in">
                                 <div class="w-10 h-10 flex-none image-fit rounded-full overflow-hidden">
-                                    <img alt="Profile Picture" src="{{ asset('storage/static/images' . '/' . $transaction->user->photo) }}">
+                                    <img alt="Profile Picture" src="{{ empty($transaction->user->photo) ? asset('storage/static/images') . '/null.jpg' : asset('storage/static/images') . '/' . $transaction->user->photo }}">
                                 </div>
                                 <div class="ml-4 mr-auto">
                                     <div class="font-medium truncate">{{ $transaction->user->name }}</div>

@@ -10,13 +10,13 @@
         <!-- BEGIN: Login Info -->
         <div class="hidden xl:flex flex-col min-h-screen">
             <a href="" class="-intro-x flex items-center pt-5">
-                <img alt="Rubick Tailwind HTML Admin Template" class="w-6" src="{{ asset('dist/images/logo.svg') }}">
+                <img alt="image" class="w-6" src="{{ asset('dist/images/logo.svg') }}">
                 <span class="text-white text-lg ml-3">
                     Rubick
                 </span>
             </a>
             <div class="my-auto">
-                <img alt="Rubick Tailwind HTML Admin Template" class="-intro-x w-1/2 -mt-16" src="{{ asset('dist/images/illustration.svg') }}">
+                <img alt="image" class="-intro-x w-1/2 -mt-16" src="{{ asset('dist/images/illustration.svg') }}">
                 <div class="-intro-x text-white font-medium text-4xl leading-tight mt-10">A few more clicks to <br> sign in to your account.</div>
                 <div class="-intro-x mt-5 text-lg text-white text-opacity-70 dark:text-slate-400">Manage all your e-commerce accounts in one place</div>
             </div>
@@ -29,9 +29,9 @@
                 <div class="intro-x mt-2 text-slate-400 xl:hidden text-center">A few more clicks to sign in to your account. Manage all your e-commerce accounts in one place</div>
                 <div class="intro-x mt-8">
                     <form id="login-form">
-                        <input id="email" type="text" class="intro-x login__input form-control py-3 px-4 block" placeholder="Email" value="bryanjoseph.aguinaldo.e@bulsu.edu.ph">
+                        <input id="email" type="text" class="intro-x login__input form-control py-3 px-4 block" placeholder="Email">
                         <div id="error-email" class="login__input-error text-danger mt-2"></div>
-                        <input id="password" type="password" class="intro-x login__input form-control py-3 px-4 block mt-4" placeholder="Password" value="iloveusana">
+                        <input id="password" type="password" class="intro-x login__input form-control py-3 px-4 block mt-4" placeholder="Password">
                         <div id="error-password" class="login__input-error text-danger mt-2"></div>
                     </form>
                 </div>
@@ -40,14 +40,9 @@
                         <input id="remember-me" type="checkbox" class="form-check-input border mr-2">
                         <label class="cursor-pointer select-none" for="remember-me">Remember me</label>
                     </div>
-                    <a href="">Forgot Password?</a>
                 </div>
                 <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
                     <button id="btn-login" class="btn btn-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top">Login</button>
-                    <button class="btn btn-outline-secondary py-3 px-4 w-full xl:w-32 mt-3 xl:mt-0 align-top">Register</button>
-                </div>
-                <div class="intro-x mt-10 xl:mt-24 text-slate-600 dark:text-slate-500 text-center xl:text-left">
-                    By signin up, you agree to our <a class="text-primary dark:text-slate-200" href="">Terms and Conditions</a> & <a class="text-primary dark:text-slate-200" href="">Privacy Policy</a>
                 </div>
             </div>
         </div>

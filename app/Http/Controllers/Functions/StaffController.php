@@ -79,7 +79,7 @@ class StaffController extends Controller
 
             Log::create([
                 'user_id' => Auth::user()->id,
-                'message' => 'Viewed user with id ' . $id . ': ' . User::orderBy('created_at', 'DESC')->pluck('name')->first()
+                'message' => 'Viewed user with id ' . $id . ': ' . User::withTrashed()->where('id', $id)->pluck('name')->first()
             ]);
 
 
@@ -107,15 +107,23 @@ class StaffController extends Controller
     public function edit($id)
     {
         if (request()->ajax()) {
-            $user = User::where('id', $id)->get();
+            $user = User::where('id', $id)->first();
             $role = User::withTrashed()->find($id)->roles->first()->name;
+
+            if (Auth::user()->roles->first()->id > $user->roles()->first()->id) {
+                return response()->json([
+                    'status' => 0,
+                    'title' => 'Operation failed',
+                    'content' => 'You are not authorized to perform this action.'
+                ]);
+            }
 
             return response()->json([
                 'status' => 1,
                 'message' => 'Fetched successfully.',
-                'data' => $user[0],
+                'data' => $user,
                 'role' => $role,
-                'parsed' => ['birthdate' => (new Carbon($user[0]->birthdate))->format('F d, Y'), 'role' => $role]
+                'parsed' => ['birthdate' => (new Carbon($user->birthdate))->format('F d, Y'), 'role' => $role]
             ]);
         }
         return abort(404);
@@ -159,6 +167,13 @@ class StaffController extends Controller
             try {
                 if (request()->isMethod('delete')) {
                     $user = User::where('id', $id)->first();
+                    if (Auth::user()->roles->first()->id > $user->roles()->first()->id) {
+                        return response()->json([
+                            'status' => 0,
+                            'title' => 'Operation failed',
+                            'content' => 'You are not authorized to perform this action.'
+                        ]);
+                    }
                     if ($id == Auth::user()->id) {
                         return response()->json([
                             'status' => 0,
@@ -202,13 +217,22 @@ class StaffController extends Controller
     {
         if (request()->ajax()) {
             if (request()->isMethod('patch')) {
-                $user = User::withTrashed()->where('id', $id)->get();
+                $user = User::withTrashed()->where('id', $id)->first();
+
+                if (Auth::user()->roles->first()->id > $user->roles()->first()->id) {
+                    return response()->json([
+                        'status' => 0,
+                        'title' => 'Operation failed',
+                        'content' => 'You are not authorized to perform this action.'
+                    ]);
+                }
+
                 User::withTrashed()->where('id', $id)->restore();
 
                 return response()->json([
                     'status' => 1,
                     'title' => 'Operation successful',
-                    'content' => 'Staff ' . $user[0]->name . ' has been restored.'
+                    'content' => 'Staff ' . $user->name . ' has been restored.'
                 ]);
             }
         }

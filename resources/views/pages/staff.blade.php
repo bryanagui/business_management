@@ -497,8 +497,6 @@
         });
 
         $("table").on('click', '#edit', function (e) {
-            showSlideover("#edit-staff-modal");
-
             var id = $(this).data("id");
             $.ajax({
                 type: "POST",
@@ -509,12 +507,18 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    $.each(response.data, function (i, v) {
-                         $("#edit-"+i).val(v);
-                    });
-                    $('#edit-role').val(response.parsed.role);
-                    response.data.gender == "female" ? $("#edit-gender-female").prop("checked", true) : $("#edit-gender-male").prop("checked", true);
-                    $("#edit-date").val(response.parsed.birthdate);
+                    if(response.status == 1){
+                        showSlideover("#edit-staff-modal");
+                        $.each(response.data, function (i, v) {
+                            $("#edit-"+i).val(v);
+                        });
+                        $('#edit-role').val(response.parsed.role);
+                        response.data.gender == "female" ? $("#edit-gender-female").prop("checked", true) : $("#edit-gender-male").prop("checked", true);
+                        $("#edit-date").val(response.parsed.birthdate);
+                    }
+                    else {
+                        showDangerNotification(response.title, response.content);
+                    }
                 },
             });
 
@@ -574,14 +578,17 @@
                         switch(response.status){
                             case 1:
                                 showSuccessNotification(response.title, response.content);
+                                finishedLoading("#confirm-staff-deactivate", "Archive");
+                                hideModal("#deactivate-staff-modal");
+                                table.ajax.reload();
                                 break;
                             default:
                                 showDangerNotification(response.title, response.content);
+                                finishedLoading("#confirm-staff-deactivate", "Archive");
+                                hideModal("#deactivate-staff-modal");
+                                table.ajax.reload();
                                 break;
                         }
-                        finishedLoading("#confirm-staff-deactivate", "Archive");
-                        hideModal("#deactivate-staff-modal");
-                        table.ajax.reload();
                     },
                     error: function (xhr) {
                         finishedLoading("#confirm-staff-deactivate", "Archive");
@@ -608,10 +615,20 @@
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        showSuccessNotification(response.title, response.content);
-                        finishedLoading("#confirm-staff-restore", "Restore");
-                        hideModal("#restore-staff-modal");
-                        table.ajax.reload();
+                        switch(response.status){
+                            case 1:
+                                showSuccessNotification(response.title, response.content);
+                                finishedLoading("#confirm-staff-restore", "Restore");
+                                hideModal("#restore-staff-modal");
+                                table.ajax.reload();
+                                break;
+                            default:
+                                showDangerNotification(response.title, response.content);
+                                finishedLoading("#confirm-staff-restore", "Restore");
+                                hideModal("#restore-staff-modal");
+                                table.ajax.reload();
+                                break;
+                        }
                     },
                 });
             });

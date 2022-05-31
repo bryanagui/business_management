@@ -135,7 +135,7 @@ class InventoryController extends Controller
                 if (request()->isMethod('delete')) {
                     Log::create([
                         'user_id' => Auth::user()->id,
-                        'message' => 'Permanently deleted product with ID ' . $id . ': ' . Product::where('id', $id)->pluck('name')->first(),
+                        'message' => 'Permanently deleted product with ID ' . $id . ': ' . Product::withTrashed()->where('id', $id)->pluck('name')->first(),
                     ]);
 
                     Product::withTrashed()->where('id', $id)->forceDelete();

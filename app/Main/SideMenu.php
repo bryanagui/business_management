@@ -44,16 +44,16 @@ class SideMenu
                 'route_name' => 'category',
                 'title' => 'Categories'
             ],
+            'transactionHistory' => [
+                'icon' => 'dollar-sign',
+                'route_name' => 'transaction_history',
+                'title' => 'Transaction History'
+            ],
             'logs' => [
                 'icon' => 'file-text',
                 'route_name' => 'logs',
                 'title' => 'Logs',
             ],
-            'transactionHistory' => [
-                'icon' => 'dollar-sign',
-                'route_name' => 'transaction_history',
-                'title' => 'Transaction History'
-            ]
         ];
     }
 }

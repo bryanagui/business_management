@@ -92,5 +92,80 @@ class UserSeeder extends Seeder
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ])->assignRole(['Twice']);
+
+        User::create([
+            'name' => 'Im Nayeon',
+            'email' => 'nayeon.twice@jype.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('iloveunayeon'),
+            'gender' => 'female',
+            'birthdate' => new Carbon("September 22, 1995"),
+            'address' => 'Seoul, South Korea',
+            'contact' => '09123456789',
+            'photo' => 'nayeon-default.jpg',
+            'remember_token' => Str::random(10),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ])->assignRole(['Twice']);
+
+        User::create([
+            'name' => 'Son Chaeyoung',
+            'email' => 'chaeyoung.twice@jype.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('iloveuchaeyoung'),
+            'gender' => 'female',
+            'birthdate' => new Carbon("April 23, 1999"),
+            'address' => 'Seoul, South Korea',
+            'contact' => '09123456789',
+            'photo' => 'chaeyoung-default.jpg',
+            'remember_token' => Str::random(10),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ])->assignRole(['Twice']);
+
+        User::create([
+            'name' => 'Park Jihyo',
+            'email' => 'jihyo.twice@jype.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('iloveujihyo'),
+            'gender' => 'female',
+            'birthdate' => new Carbon("February 1, 1997"),
+            'address' => 'Seoul, South Korea',
+            'contact' => '09123456789',
+            'photo' => 'jihyo-default.jpg',
+            'remember_token' => Str::random(10),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ])->assignRole(['Twice']);
+
+        User::create([
+            'name' => 'Chou Tzuyu',
+            'email' => 'tzuyu.twice@jype.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('iloveyoutzuyu'),
+            'gender' => 'female',
+            'birthdate' => new Carbon("June 14, 1999"),
+            'address' => 'Seoul, South Korea',
+            'contact' => '09123456789',
+            'photo' => 'tzuyu-default.jpg',
+            'remember_token' => Str::random(10),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ])->assignRole(['Twice']);
+
+        User::create([
+            'name' => 'Yoo Jeongyeon',
+            'email' => 'jeongyeon.twice@jype.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('iloveujeongyeon'),
+            'gender' => 'female',
+            'birthdate' => new Carbon("November 1, 1996"),
+            'address' => 'Seoul, South Korea',
+            'contact' => '09123456789',
+            'photo' => 'jeongyeon-default.jpg',
+            'remember_token' => Str::random(10),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ])->assignRole(['Twice']);
     }
 }

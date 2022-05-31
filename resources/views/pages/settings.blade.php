@@ -14,7 +14,7 @@
         <div class="intro-y box mt-5">
             <div class="relative flex items-center p-5">
                 <div class="w-12 h-12 image-fit">
-                    <img alt="Rubick Tailwind HTML Admin Template" class="rounded-full" src="{{ empty(Auth::user()->photo) ? asset('storage/static/images') . '/null.jpg' : asset('storage/static/images') . '/' . Auth::user()->photo }}">
+                    <img alt="image" class="rounded-full" src="{{ empty(Auth::user()->photo) ? asset('storage/static/images') . '/null.jpg' : asset('storage/static/images') . '/' . Auth::user()->photo }}">
                 </div>
                 <div class="ml-4 mr-auto">
                     <div class="font-medium text-base">{{ Auth::user()->name }}</div>

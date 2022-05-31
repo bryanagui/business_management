@@ -18,21 +18,15 @@
         </div>
         <!-- BEGIN: Category List -->
         <div class="col-span-12 mt-6" id="categories-content">
-            <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0 w-2/5">
+            <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0 w-1/2">
                 <table class="table table-report w-24 sm:mt-2" id="categories-table">
+                    <thead>
+                        <th class="whitespace-nowrap">ID</th>
+                        <th class="whitespace-nowrap">NAME</th>
+                        <th class="whitespace-nowrap">DATE</th>
+                        <th class="whitespace-nowrap">ACTIONS</th>
+                    </thead>
                     <tbody>
-                        @foreach(\App\Models\ProductCategory::all() as $category)
-                        <tr class="intro-x">
-                            <td class="w-40">
-                                <div class="flex">
-                                    <strong>{{ $category->name }}</strong>
-                                </div>
-                            </td>
-                            <td class="table-report__action w-8">
-                                <div class='flex justify-center items-center'><a href='javascript:;' class='flex items-center mr-3 {{ $dark_mode ? ' text-warning' : 'text-danger' }}' id='delete' data-id='{{ $category->id }}'><i class='fa-solid fa-x w-4 h-4 mr-1'></i> Discard</a></div>
-                            </td>
-                        </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -84,6 +78,7 @@
 @endsection
 
 @section('script')
+<script src="{{ asset('dist/js/datatables.js') }}"></script>
 <script>
     $(document).ready(function () {
         $.ajaxSetup({
@@ -124,6 +119,38 @@
             $("#success-notification-content").text(content);
         }
 
+        var table = $("#categories-table").DataTable({
+            processing: true,
+            ordering: false,
+            serverSide: true,
+            autoWidth: false,
+            autoHeight: false,
+            responsive: true,
+            pageResize: false,
+
+            ajax: {
+                url: "{{ route('datatables.categories') }}",
+            },
+
+            columns: [
+                {data: "id", name: "id"},
+                {data: "name", name: "name"},
+                {data: "date", name: "date"},
+                {data: "actions", name: "actions"}
+            ],
+
+            columnDefs: [
+                {
+                    targets: [0, 1, 2],
+                    className: "text-center",
+                },
+                {
+                    targets: [-1],
+                    className: "table-report__action w-8"
+                }
+            ]
+        });
+
         $("#add-category-button").click(function (e) {
             e.preventDefault();
             showModal('#confirm-add-modal');
@@ -155,7 +182,7 @@
                     data: { submit: true },
                     dataType: "json",
                     success: function (response) {
-                        reloadCategory();
+                        table.ajax.reload();
                         showSuccessNotification('Operation Successful!', response.message);
                         hideModal("#confirm-delete-modal");
                     }
