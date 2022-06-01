@@ -1,7 +1,7 @@
 @extends('../layout/' . $layout)
 
 @section('subhead')
-<title>Reserv8tion - Invoice</title>
+<title>Resale - Invoice</title>
 @endsection
 
 @section('subcontent')
@@ -16,7 +16,7 @@
 <div class="intro-y box overflow-hidden mt-5" id="invoice">
     <div class="border-b border-slate-200/60 dark:border-darkmode-400 text-center sm:text-left">
         <div class="px-5 py-10 sm:px-20 sm:py-20">
-            <div class="text-primary font-semibold text-3xl">RESERV8TION</div>
+            <div class="text-primary font-semibold text-3xl">RESALE</div>
             <div class="mt-2 transaction-id">
                 Receipt #{{ \App\Models\Transaction::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->pluck('transaction_id')->first() }}
             </div>

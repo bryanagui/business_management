@@ -1,7 +1,7 @@
 @extends('../layout/' . $layout)
 
 @section('head')
-<title>Login - Rubick - Tailwind HTML Admin Template</title>
+<title>Resale - Login</title>
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@
             <a href="" class="-intro-x flex items-center pt-5">
                 <img alt="image" class="w-6" src="{{ asset('dist/images/logo.svg') }}">
                 <span class="text-white text-lg ml-3">
-                    Rubick
+                    Resale
                 </span>
             </a>
             <div class="my-auto">

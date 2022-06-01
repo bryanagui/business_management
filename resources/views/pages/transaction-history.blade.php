@@ -1,7 +1,7 @@
 @extends('../layout/' . $layout)
 
 @section('subhead')
-<title>Reserv8tion - Inventory Management</title>
+<title>Resale - Transaction History</title>
 <link href="http://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('dist/css/square-cropper.css') }}" />
 <link rel="stylesheet" href="{{ asset('dist/css/form-range.css') }}" />

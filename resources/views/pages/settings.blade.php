@@ -1,7 +1,7 @@
 @extends('../layout/' . $layout)
 
 @section('subhead')
-<title>Update Profile - Rubick - Tailwind HTML Admin Template</title>
+<title>Resale - Account Settings</title>
 @endsection
 
 @section('subcontent')

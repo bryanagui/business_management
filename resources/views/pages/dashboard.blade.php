@@ -1,7 +1,7 @@
 @extends('../layout/' . $layout)
 
 @section('subhead')
-<title>Reserv8tion - Dashboard</title>
+<title>Resale - Dashboard</title>
 <link href="http://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('dist/css/cropper.css') }}" />
 <link rel="stylesheet" href="{{ asset('dist/css/form-range.css') }}" />
@@ -178,7 +178,7 @@
                         <h2 class="text-lg font-medium truncate mr-5">Recent Transactions</h2>
                     </div>
                     <div class="mt-5">
-                        @foreach (\App\Models\Transaction::with(['user'])->orderBy('created_at', 'desc')->get() as $transaction)
+                        @foreach (\App\Models\Transaction::with(['user'])->orderBy('created_at', 'desc')->limit(15)->get() as $transaction)
                         <div class="intro-x">
                             <div class="box px-5 py-3 mb-3 flex items-center zoom-in">
                                 <div class="w-10 h-10 flex-none image-fit rounded-full overflow-hidden">
@@ -575,7 +575,7 @@
                                     e.preventDefault();
 
                                     showModal("#confirm-upload-modal");
-                                        $(".confirm-cropped-upload").click(function (e) {
+                                        $(".confirm-cropped-upload").off().click(function (e) {
                                             $image.cropper("getCroppedCanvas").toBlob((blob) => {
                                             const formData = new FormData();
                                             formData.append('image', blob);

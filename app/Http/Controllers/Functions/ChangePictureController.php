@@ -33,11 +33,6 @@ class ChangePictureController extends Controller
                 'media' => $filename
             ]);
 
-            Log::create([
-                'user_id' => Auth::user()->id,
-                'message' => 'Changed profile picture',
-            ]);
-
             return response()->json([
                 'status' => 1,
                 'message' => 'Uploaded successfully.',
@@ -86,6 +81,11 @@ class ChangePictureController extends Controller
             ]);
 
             $user = User::where('id', Auth::user()->id)->get();
+
+            Log::create([
+                'user_id' => Auth::user()->id,
+                'message' => 'Changed profile picture',
+            ]);
 
             return response()->json([
                 'status' => 1,
